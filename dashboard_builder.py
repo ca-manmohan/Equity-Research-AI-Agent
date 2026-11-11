@@ -770,12 +770,54 @@ def render_web_dashboard_html(report: Dict[str, Any]) -> str:
         }
     )
 
+    meta_desc = (
+        f"{name} ({sym}) fundamental analysis and Indian equity research digest covering {report.get('sector', 'Equity')} "
+        f"({report.get('industry', '')}): 4-quarter earnings surprise, Ind-AS 108 segment mix, ROIC vs WACC capital efficiency, "
+        f"5-year FCFF DCF & IRR/MOIC valuation, Nifty/benchmark comparison, peer moat scorecard, and SEBI-compliant educational synthesis."
+    )
+    meta_keywords = (
+        f"{name}, {sym}, fundamental analysis, Indian stock analysis, Nifty 50 stock analysis, NSE stock research, "
+        f"how to do stock research, DCF valuation, ROIC WACC, quarterly earnings analysis, {report.get('sector', '')}"
+    )
+    schema_json_ld = json.dumps(
+        {
+            "@context": "https://schema.org",
+            "@type": "AnalysisNewsArticle",
+            "headline": f"{name} ({sym}) Fundamental Analysis, Valuation & Financial Research Digest",
+            "description": meta_desc,
+            "keywords": meta_keywords,
+            "datePublished": str(report.get("generated_at", ""))[:10],
+            "about": {
+                "@type": "Corporation",
+                "name": name,
+                "tickerSymbol": sym,
+            },
+            "author": {
+                "@type": "SoftwareApplication",
+                "name": "Equity Research AI Agent",
+            },
+            "isAccessibleForFree": True,
+            "educationalUse": "Quantitative Financial Education (Non-Advisory under SEBI RA 2014 / IA 2013)",
+        },
+        ensure_ascii=False,
+    )
+
     return f"""<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>{_esc(sym)} — Fundamental &amp; Valuation Data Digest (Educational)</title>
+<title>{_esc(name)} ({_esc(sym)}) — Fundamental Analysis, Valuation &amp; Stock Research Digest</title>
+<meta name="description" content="{_esc(meta_desc)}" />
+<meta name="keywords" content="{_esc(meta_keywords)}" />
+<meta name="robots" content="index, follow" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{_esc(name)} ({_esc(sym)}) — Fundamental Analysis &amp; Valuation Digest" />
+<meta property="og:description" content="{_esc(meta_desc)}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{_esc(name)} ({_esc(sym)}) — Equity Research AI Agent" />
+<meta name="twitter:description" content="{_esc(meta_desc)}" />
+<script type="application/ld+json">{schema_json_ld}</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <style>
   :root {{

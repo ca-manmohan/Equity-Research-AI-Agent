@@ -310,6 +310,8 @@ def test_standardized_report_and_web_dashboard(tmp_path: Path) -> None:
     assert "### SEBI Regulatory & Educational Disclaimer" in memo_text
     assert "Sources of Data &amp; Strict Actual-Data Verification" in html_text
     assert "SEBI Regulatory &amp; Educational Notice:" in html_text
+    assert '<meta name="description"' in html_text
+    assert 'application/ld+json' in html_text
     prov = rep.get("data_provenance", {})
     assert prov.get("strict_actual_data_enforced") is True
     assert prov.get("verified_sources_count", 0) >= 2

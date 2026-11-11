@@ -1,7 +1,17 @@
 {
   "name": "equity-research-ai-agent-skills",
   "version": "1.0.0",
-  "description": "Portable multi-agent skill registry for ChatGPT/OpenAI Codex, Claude Code, Anthropic Plugins, Cursor, Antigravity, Windsurf, and MCP clients.",
+  "description": "Portable multi-agent skill registry for fundamental analysis, Indian stock analysis, Nifty 50 equity research, DCF valuation, and forensic auditing across ChatGPT/OpenAI Codex, Claude Code, Cursor, Antigravity, Windsurf, and MCP clients.",
+  "topics": [
+    "fundamental-analysis",
+    "how-to-do-stock-research",
+    "indian-stock-analysis",
+    "nifty-stock-analysis",
+    "nse-xbrl",
+    "fcff-dcf",
+    "forensic-accounting",
+    "mcp-server"
+  ],
   "mcp_server": {
     "name": "indian-investor-mcp",
     "command": "python",

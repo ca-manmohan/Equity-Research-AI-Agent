@@ -5,10 +5,24 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "equity-research-ai-agent"
 version = "1.0.0"
-description = "Autonomous Institutional Equity Research AI Agent powered by PyKX/KDB-X, exchange XBRL filings, strict actual-data guards, and SEBI-compliant educational reporting."
+description = "Equity Research AI Agent for fundamental analysis, Indian stock analysis, Nifty 50 screening, and step-by-step stock research powered by PyKX/KDB-X, NSE XBRL filings, FCFF DCF, strict actual-data guards & SEBI educational reporting."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
+keywords = [
+  "fundamental-analysis",
+  "equity-research",
+  "indian-stock-analysis",
+  "nifty-50",
+  "how-to-do-stock-research",
+  "dcf-valuation",
+  "kdb-x",
+  "pykx",
+  "mcp-server",
+  "ai-agent",
+  "nse-india",
+  "sebi-compliant"
+]
 dependencies = [
   "numpy>=1.26.0",
   "pandas>=2.2.0",
