@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TCS.NS — Fundamental &amp; Valuation Data Digest (Educational)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f3f6fb; --surface: #ffffff; --surface-2: #f8fafc; --border: #e2e8f0;
+    --text: #0f172a; --muted: #64748b; --accent: #0284c7; --accent-soft: rgba(2, 132, 199, 0.10);
+    --green: #059669; --amber: #d97706; --red: #dc2626;
+    --shadow: 0 3px 14px rgba(15, 23, 42, 0.05);
+  }
+  [data-theme="dark"] {
+    --bg: #090d16; --surface: #111827; --surface-2: #182234; --border: #263244;
+    --text: #f1f5f9; --muted: #94a3b8; --accent: #38bdf8; --accent-soft: rgba(56, 189, 248, 0.14);
+    --green: #22c55e; --amber: #f59e0b; --red: #f87171;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  }
+  * { box-sizing: border-box; scroll-behavior: smooth; }
+  body { margin: 0; font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+  .nav-bar { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--border); padding: 9px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.82rem; font-weight: 600; padding: 5px 11px; border-radius: 999px; transition: all .15s; }
+  .nav-links a:hover { background: var(--accent-soft); color: var(--accent); }
+  .container { max-width: 1360px; margin: 0 auto; padding: 18px 22px 48px; }
+  .hero { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .hero h1 { margin: 0; font-size: 1.55rem; letter-spacing: -0.025em; }
+  .subtitle { color: var(--muted); font-size: 0.84rem; margin-top: 3px; }
+  .btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 0.81rem; font-weight: 600; }
+  .key-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 10px; margin-bottom: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 11px 16px; box-shadow: var(--shadow); }
+  .key-cell .lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+  .key-cell .val { font-size: 0.96rem; font-weight: 700; margin-top: 2px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .kpi-label { color: var(--muted); font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .kpi-val { font-size: 1.38rem; font-weight: 800; margin-top: 4px; letter-spacing: -0.02em; }
+  .kpi-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .section-hdr { font-size: 1.13rem; font-weight: 800; margin: 24px 0 12px; display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: var(--sec-soft, var(--accent-soft)); border-left: 4px solid var(--sec-accent, var(--accent)); border-radius: 10px; }
+  .section-num { background: var(--sec-accent, var(--accent)); color: #ffffff; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 7px; font-size: 0.84rem; flex-shrink: 0; }
+  .sec-wrap { margin-bottom: 10px; }
+  .sec-wrap .card { border-top: 3px solid var(--sec-accent, var(--accent)); }
+  .sec-navy { --sec-accent: #1e40af; --sec-soft: rgba(30, 64, 175, 0.09); --accent: #1e40af; --accent-soft: rgba(30, 64, 175, 0.09); }
+  .sec-emerald { --sec-accent: #047857; --sec-soft: rgba(4, 120, 87, 0.09); --accent: #047857; --accent-soft: rgba(4, 120, 87, 0.09); }
+  .sec-indigo { --sec-accent: #6d28d9; --sec-soft: rgba(109, 40, 217, 0.09); --accent: #6d28d9; --accent-soft: rgba(109, 40, 217, 0.09); }
+  .sec-cobalt { --sec-accent: #0369a1; --sec-soft: rgba(3, 105, 161, 0.09); --accent: #0369a1; --accent-soft: rgba(3, 105, 161, 0.09); }
+  .sec-amber { --sec-accent: #b45309; --sec-soft: rgba(180, 83, 9, 0.10); --accent: #b45309; --accent-soft: rgba(180, 83, 9, 0.10); }
+  .sec-teal { --sec-accent: #0f766e; --sec-soft: rgba(15, 118, 110, 0.09); --accent: #0f766e; --accent-soft: rgba(15, 118, 110, 0.09); }
+  .sec-jade { --sec-accent: #334155; --sec-soft: rgba(51, 65, 85, 0.09); --accent: #334155; --accent-soft: rgba(51, 65, 85, 0.09); }
+  .sec-cyan { --sec-accent: #0891b2; --sec-soft: rgba(8, 145, 178, 0.09); --accent: #0891b2; --accent-soft: rgba(8, 145, 178, 0.09); }
+  [data-theme="dark"] .sec-navy { --sec-accent: #60a5fa; --sec-soft: rgba(96, 165, 250, 0.14); --accent: #60a5fa; --accent-soft: rgba(96, 165, 250, 0.14); }
+  [data-theme="dark"] .sec-emerald { --sec-accent: #34d399; --sec-soft: rgba(52, 211, 153, 0.14); --accent: #34d399; --accent-soft: rgba(52, 211, 153, 0.14); }
+  [data-theme="dark"] .sec-indigo { --sec-accent: #a78bfa; --sec-soft: rgba(167, 139, 250, 0.14); --accent: #a78bfa; --accent-soft: rgba(167, 139, 250, 0.14); }
+  [data-theme="dark"] .sec-cobalt { --sec-accent: #38bdf8; --sec-soft: rgba(56, 189, 248, 0.14); --accent: #38bdf8; --accent-soft: rgba(56, 189, 248, 0.14); }
+  [data-theme="dark"] .sec-amber { --sec-accent: #fbbf24; --sec-soft: rgba(251, 191, 36, 0.14); --accent: #fbbf24; --accent-soft: rgba(251, 191, 36, 0.14); }
+  [data-theme="dark"] .sec-teal { --sec-accent: #2dd4bf; --sec-soft: rgba(45, 212, 191, 0.14); --accent: #2dd4bf; --accent-soft: rgba(45, 212, 191, 0.14); }
+  [data-theme="dark"] .sec-jade { --sec-accent: #94a3b8; --sec-soft: rgba(148, 163, 184, 0.15); --accent: #94a3b8; --accent-soft: rgba(148, 163, 184, 0.15); }
+  [data-theme="dark"] .sec-cyan { --sec-accent: #22d3ee; --sec-soft: rgba(34, 211, 238, 0.14); --accent: #22d3ee; --accent-soft: rgba(34, 211, 238, 0.14); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .subcard { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 13px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; margin-bottom: 14px; }
+  .grid-2 > .card { margin-bottom: 0; }
+  .grid-2-tight { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; align-items: start; }
+  .split-40-60 { display: grid; grid-template-columns: 5fr 7fr; gap: 18px; align-items: center; }
+  .mt-12 { margin-top: 12px; }
+  .qp-box { background: var(--accent-soft); border: 1px solid rgba(2,132,199,0.22); border-radius: 10px; padding: 11px 15px; margin-bottom: 12px; }
+  .qp-box h4 { margin: 0 0 5px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); }
+  .qp-box ul { margin: 0; padding-left: 18px; font-size: 0.85rem; }
+  .badge { display: inline-block; padding: 6px 13px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+  .badge-green { background: rgba(5,150,105,0.13); color: var(--green); border: 1px solid rgba(5,150,105,0.3); }
+  .badge-amber { background: rgba(217,119,6,0.13); color: var(--amber); border: 1px solid rgba(217,119,6,0.3); }
+  .badge-red { background: rgba(220,38,38,0.13); color: var(--red); border: 1px solid rgba(220,38,38,0.3); }
+  .decision-box { border-radius: 10px; padding: 11px 14px; margin-top: 12px; font-size: 0.87rem; border: 1px solid var(--border); border-left-width: 4px; background: var(--surface-2); }
+  .decision-green { border-left-color: var(--green); } .decision-amber { border-left-color: var(--amber); } .decision-red { border-left-color: var(--red); } .decision-blue { border-left-color: var(--accent); }
+  .decision-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; color: var(--accent); display: block; margin-bottom: 2px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.71rem; font-weight: 600; white-space: nowrap; }
+  .pill-green { background: rgba(5,150,105,0.13); color: var(--green); } .pill-blue { background: var(--accent-soft); color: var(--accent); }
+  .pill-red { background: rgba(220,38,38,0.13); color: var(--red); } .pill-slate { background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
+  .text-green { color: var(--green); } .text-amber { color: var(--amber); } .text-red { color: var(--red); }
+  .compact-feed-table { width: 100%; border-collapse: collapse; font-size: 0.81rem; margin-top: 4px; }
+  .compact-feed-table th, .compact-feed-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compact-feed-table td.feed-hl { width: 54%; line-height: 1.38; }
+  .compact-feed-table td.feed-hl a { color: var(--text); text-decoration: none; font-weight: 600; }
+  .compact-feed-table td.feed-hl a:hover { color: var(--accent); text-decoration: underline; }
+  .compact-feed-table td.feed-ef { width: 26%; }
+  .compact-feed-table td.feed-src { width: 20%; white-space: nowrap; font-size: 0.77rem; }
+  .ai-brief-box { border-left: 3px solid var(--accent); margin-top: 6px; }
+  .brief-lead { font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--border); line-height: 1.4; }
+  .summary-bullets { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 0.83rem; line-height: 1.42; }
+  .summary-bullets li { display: flex; align-items: flex-start; gap: 8px; }
+  .summary-bullets li .pill { margin-top: 2px; flex-shrink: 0; }
+  .brief-text { color: var(--text); }
+  .brief-impact { font-size: 0.77rem; color: var(--muted); margin-top: 2px; line-height: 1.38; }
+  .brief-impact strong { color: var(--accent); font-weight: 700; }
+  .source-strip { margin-top: 9px; padding-top: 7px; border-top: 1px dashed var(--border); display: flex; flex-wrap: wrap; align-items: center; gap: 5px; font-size: 0.74rem; }
+  .source-hdr { font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.69rem; margin-right: 2px; }
+  .source-chip { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--accent); text-decoration: none; font-weight: 600; }
+  .source-chip:hover { border-color: var(--accent); text-decoration: underline; }
+  .audit-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 8px; margin: 10px 0; }
+  .mini-stat { background: var(--surface-2); padding: 9px 11px; border-radius: 9px; border: 1px solid var(--border); }
+  .mini-stat .lbl { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+  .mini-stat .v { font-size: 1.0rem; font-weight: 800; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+  th, td { padding: 7px 9px; border-bottom: 1px solid var(--border); text-align: left; }
+  th { color: var(--muted); font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .highlight-row { background: var(--accent-soft); }
+  .cell-upside { background: rgba(5,150,105,0.16); color: var(--green); font-weight: 700; }
+  .cell-fair { background: rgba(217,119,6,0.12); color: var(--amber); font-weight: 600; }
+  .cell-downside { background: rgba(220,38,38,0.12); color: var(--red); }
+  .chart-box { position: relative; height: 225px; width: 100%; }
+  .insight-card { background: var(--surface); border: 1px solid var(--border); border-left-width: 4px; border-radius: 12px; padding: 13px 15px; box-shadow: var(--shadow); }
+  .border-green { border-left-color: var(--green); } .border-blue { border-left-color: var(--accent); } .border-amber { border-left-color: var(--amber); }
+  .insight-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 3px; }
+  .insight-head h4 { margin: 0; font-size: 0.94rem; }
+  .insight-reading { font-size: 0.8rem; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
+  .explain-block { margin: 4px 0; font-size: 0.84rem; }
+  .compact-list { margin: 5px 0 0; padding-left: 17px; font-size: 0.82rem; color: var(--muted); }
+  .sub, .muted { font-size: 0.74rem; color: var(--muted); }
+  .warn-chip { display: inline-block; background: rgba(217,119,6,0.15); color: var(--amber); padding: 3px 9px; border-radius: 999px; font-size: 0.74rem; margin: 2px 4px 2px 0; font-weight: 600; }
+  .veto-chip { display: inline-block; background: rgba(220,38,38,0.16); color: var(--red); padding: 3px 9px; border-radius: 999px; font-size: 0.74rem; margin: 2px 4px 2px 0; font-weight: 700; }
+  .overflow-x { overflow-x: auto; }
+  .range-track { position: relative; height: 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); margin: 8px 0 5px; }
+  .range-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--green)); }
+  .range-dot { position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--text); border: 2.5px solid var(--surface); transform: translate(-50%, -50%); box-shadow: 0 2px 5px rgba(0,0,0,0.28); }
+  .consensus-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; margin: 8px 0 5px; background: var(--surface-2); border: 1px solid var(--border); }
+  .cbar-buy { background: var(--green); } .cbar-hold { background: var(--amber); } .cbar-sell { background: var(--red); }
+  .sim-panel { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin: 10px 0; }
+  .sim-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 8px; }
+  .sim-row label { display: block; font-size: 0.76rem; font-weight: 700; color: var(--muted); }
+  .sim-row input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 3px; }
+  .sim-out { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  @media (max-width: 900px) { .grid-2, .split-40-60 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="nav-bar">
+  <div style="font-weight:800;font-size:0.93rem;">TCS.NS Financial Data Digest</div>
+  <div class="nav-links">
+    <a href="#intro">0. Intro &amp; Outlook</a>
+    <a href="#exec">1. Summary</a>
+    <a href="#price-bands">2. Price, Returns &amp; P/E</a>
+    <a href="#earnings">3. Earnings Highlights</a>
+    <a href="#financials">4. Financials &amp; Cash Flow</a>
+    <a href="#valuation">5. Intrinsic DCF</a>
+    <a href="#ownership">6. Ownership &amp; Flows</a>
+    <a href="#conclusion">7. Key Drivers &amp; Conclusion</a>
+  </div>
+  <button class="btn" onclick="toggleTheme()">Light / Dark</button>
+</div>
+
+<div class="container">
+  <div class="hero">
+    <div>
+      <h1>TATA CONSULTANCY SERV LT (TCS.NS)</h1>
+      <div class="subtitle">Technology · Information Technology Services · As of 2026-11-11 18:32 IST · Public Exchange &amp; Regulatory Data</div>
+    </div>
+    <div>
+      <span class="badge badge-amber">SOLID FUNDAMENTALS · FULL VALUATION · Quality Index 67.9/100</span>
+    </div>
+  </div>
+
+  <div class="decision-box decision-blue" style="margin-top:0;margin-bottom:14px;padding:8px 14px;font-size:0.79rem;">
+    <strong>SEBI Educational Disclaimer:</strong> Strictly for quantitative financial education and data analysis using public filings. Not SEBI-registered investment advice, a research report, or a buy/sell/hold recommendation.
+  </div>
+
+  <!-- CORE FUNDAMENTAL STRIP -->
+  <div class="key-strip">
+    <div class="key-cell"><div class="lbl">P/E (TTM)</div><div class="val">17.2x</div></div>
+    <div class="key-cell"><div class="lbl">Price / Book (P/B)</div><div class="val">7.46x</div></div>
+    <div class="key-cell"><div class="lbl">EPS (TTM)</div><div class="val">INR 142.7</div></div>
+    <div class="key-cell"><div class="lbl">Book Value / Share</div><div class="val">INR 329.0</div></div>
+    <div class="key-cell"><div class="lbl">ROE</div><div class="val">51.8%</div></div>
+    <div class="key-cell"><div class="lbl">ROCE</div><div class="val">63.0%</div></div>
+    <div class="key-cell"><div class="lbl">Dividend Yield</div><div class="val">1.94%</div></div>
+  </div>
+
+  <!-- 4 NON-REDUNDANT HEADLINE METRIC CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Current Market Price (CMP)</div>
+      <div class="kpi-val">INR 2,452.8</div>
+      <div class="kpi-sub">Market Cap: INR 8,874.4B · -26.8% vs 52W High</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Base 5Y DCF Value (Model)</div>
+      <div class="kpi-val">INR 2,571.9</div>
+      <div class="kpi-sub text-amber"><strong>+4.9% variance vs CMP</strong> (WACC 10.04%)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">External Consensus Mean (Public Feed)</div>
+      <div class="kpi-val">INR 2,385.3</div>
+      <div class="kpi-sub">Third-Party Range: INR 1,920 – 3,266 (-2.8%)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Solvency &amp; Cash Conversion</div>
+      <div class="kpi-val">0.07x <span style="font-size:0.78rem;font-weight:600;color:var(--muted);">Net Debt/EBITDA</span></div>
+      <div class="kpi-sub">Cash Conv. (CFO/EBITDA): 0.68x &middot; 2 Pos / 4 Risk</div>
+    </div>
+  </div>
+
+  
+  <!-- SECTION 0: INTRODUCTION, BUSINESS OUTLOOK & ORDER BOOK -->
+  <div class="sec-wrap sec-cyan">
+  <div id="intro" class="section-hdr"><span class="section-num">0</span> Introduction: Business Overview, Annual Report Outlook &amp; Order Book</div>
+  <div class="card">
+    <div class="grid-2" style="margin-bottom:0;">
+      <div>
+        <h3 style="margin:0 0 8px">Company Business Profile</h3>
+        <p class="explain-block" style="line-height:1.52;">Tata Consultancy Services Limited provides information technology (IT) and IT enabled services.</p>
+        <div class="audit-kpis" style="margin-top:10px;">
+          <div class="mini-stat"><div class="lbl">Headquarters</div><div class="v" style="font-size:0.86rem;">Mumbai, India</div></div>
+          <div class="mini-stat"><div class="lbl">Workforce</div><div class="v" style="font-size:0.86rem;">584,519</div></div>
+          <div class="mini-stat"><div class="lbl">Corporate Site</div><div class="v" style="font-size:0.82rem;word-break:break-word;"><a href="https://www.tcs.com" target="_blank" rel="noopener noreferrer">https://www.tcs.com</a></div></div>
+        </div>
+        <div class="subcard" style="margin-top:8px;">
+          <strong>Multi-Year Scale &amp; Segments:</strong>
+          <div class="explain-block" style="margin-top:3px;">Operating revenue moved from 225,458 ₹ Cr (FY2023) to 267,021 ₹ Cr (FY2026) (+5.8% 3Y CAGR); latest operating margin 27.1%.</div>
+          <div class="muted" style="margin-top:4px;"><strong>Key Verticals:</strong> Banking, Financial Services and Insurance (39.5%), Consumer Business (15.2%), Communication, Media and Technology (14.8%), Life Sciences and Healthcare (10.4%), Manufacturing (10.0%)</div>
+          <div style="margin-top:6px;"><span class="pill pill-green" style="margin:2px 4px 2px 0;">Company has a good return on equity (ROE) track record: 3 Years ROE 51.9%</span><span class="pill pill-green" style="margin:2px 4px 2px 0;">Company has been maintaining a healthy dividend payout of 77.5%</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin:0 0 6px">Annual Report Outlook, Capex &amp; Order Book</h3>
+        <div class="muted" style="margin-bottom:6px;">Synthesized from recent Annual Report filings, exchange announcements, capex plans, and order-book / TCV disclosures.</div>
+        <div class="subcard ai-brief-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;"><span class="pill pill-blue">Disclosure Summary</span><span class="sub">8 disclosures synthesized</span></div><div class="brief-lead">Annual report, capex &amp; order-book snapshot across 8 items (Exchange Filing, Order Book / TCV) — pointing to constructive operational visibility, capital allocation, and earnings drivers for TATA CONSULTANCY SERV LT.</div><ul class="summary-bullets"><li><span class="pill pill-blue">Exchange Filing</span> <div><div class="brief-text">completion of acquisition of BBY Services India LLP.</div><div class="brief-impact"><strong>Investor Effect:</strong> Builds incremental scale or capability; monitor integration execution, funding mix, and acquisition payback ROCE.</div></div></li><li><span class="pill pill-green">Order Book / TCV</span> <div><div class="brief-text">TCS closes FY26 with Improving Sequential Growth Momentum and Strong Deal Wins.</div><div class="brief-impact"><strong>Investor Effect:</strong> Expands multi-quarter revenue visibility; track book-to-bill conversion and execution margins ahead.</div></div></li><li><span class="pill pill-green">Order Book / TCV</span> <div><div class="brief-text">TCS Q4 order book grows 29% QoQ to $12 billion, full year deal wins at $40.7 billion.</div><div class="brief-impact"><strong>Investor Effect:</strong> Large multi-year deal pipeline improves revenue visibility and capacity utilization over upcoming quarters.</div></div></li></ul><div class="source-strip"><span class="source-hdr">Sources:</span> <a class="source-chip" href="https://nsearchives.nseindia.com/corporate/TCS_CORPCS_15102026133009_SEInt15102026.pdf" target="_blank" rel="noopener">NSE Official Filing (15-Oct-2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMijwFBVV95cUxPemt6Rlp3Z1VGQ191MzRHMUwwYWVmOVZMSjdfQWp6M3otVGp1SWtsY1NmYjljVVZUaVB1TjRlenJrN3JvVVZ6S3VyNy1ueDdwQkJOcDhCek1GTkcwNENEX01GaTRtMVFFc2NkOVJsZ3dXVGtzMElkTzY3OGdrNWE4aTlhc2N0VjZKLUpLQXhzcw?oc=5" target="_blank" rel="noopener">Tata Consultancy Services (Thu, 09 Apr 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi8gFBVV95cUxNckFPYjg5RTI1V0Y1RlQxXzVFSkxJZjczVXppeHVCNWxWaHU0WUQ3aFBiejktckJxRDgxcldOZ3hqVS1TdE5leWp0REt3WnVDdEJDZ3NOQXFkUjJsUS0ySk1oTXBtUU1qQlM5MjlydUJGOEdVbmZMSm5YYkJ6V3Z5U3gyQ2dfeDliMkFTNDZHTlotQnBMZ3dHSFNJQS02MmQwLWctZHVWaVYwZDVCSVhobUxtaUlCU1lzbHV2NG5zTk0zNlB4bVdadmtLSWQ0bVF4clU3Rk93S3BfSVAwZGNmX29FXzlIQ1JoTDFDOVpiSzRCd9IB9wFBVV95cUxONng1VEF5MXl3VzEyWjRVZWZ0T1M2WEdicHNGOV84Ym1FR090Yk12RjZrUFdBRm5aMmYzWU9yZVhaczNwZlVpNHhtRFc3Xzc3bEtvWmlKY09qWnpfd0kzenNoeG5xZnhzSzd6Q1hobW9KemIxVTRKZVR4TWVZUDI0aWptYXdZQ0U1SC1taVB2RGlyN2c0SkQ2NW1jTTl5RndVc2t5TWt6OE5Tbi1BWXdrMmpUNG4yNnR4XzVudjdfLUpEYzg2MG1TRzU2VXJyWGY1OU9PTFhuQ1ZGVXNpXzlFRFVJWjh1M0Y1Z0FqSXF6bEZTLVN2cnAw?oc=5" target="_blank" rel="noopener">Moneycontrol.com (Thu, 09 Apr 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi7wFBVV95cUxOb01JVV9wcGpkb21kNTZpbTRIRU1IcnBYWm1lRDhTRVpFSXZPa0ZoTnRRYTc1S0VFc2hVX0JYVDNsT3dQTnhBZUlsc1I0V1FON1NfT1F1dlBIM0k5UENWdDlmV0ljem9zTW1pZXJiTVRfdlVEUzFrS1N1YTlzTDFWRmRGbll6QVZjdFpzbmQ2OHBLeDlWcWRUdVZ6ZG1QSWI3U1YyM2k2RDY0TlpsR09jNWlidGRxVjd5cUR0R1paSVJhT1hSSzRtRUo2NHRBNHh3X2hUR1JXNUI0NFcwR2MtdDhVa2Y3d1poTDVpTXJTTQ?oc=5" target="_blank" rel="noopener">Upstox (Thu, 08 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi8gFBVV95cUxOeWR4cHNZTnQzUmM1TXE4LTU3X2tDZEdLd2ZPSXJmM19MM0l6eFp5NXNEXzJTOGVNVmZ6Nk1GOWc3S21ZQ2Q3TmJ4RUpBVnNDUTVZbDNXWm5UYlFUV0d0WFR5aVRwUDZkZUxtTWhhNXB0Y1RxOVVYbG1LUlNzQlgyNjl1eTdOYnRneGNqVHJ0SmZvR0tBWmtJNVl1b0N1NmlDWGhWZ3N6eGE1Umwzb1oxZFFPTWNkUkg3NXhxOHVSalFtMjNCM1pQR1BSb25wVHU3V1hGUUhrMHk1SlBUUDZsNlI5REpGTnFUMzdheVdwWk5qQdIB9wFBVV95cUxPR0YzdmpMbU83OGZDZGRvMERzVldMSWVXUEpha2V2bi0tVjhRS0JaT3BULV9zS0Q1bTNZczBFSW9DVzlGc2tSZEY5bU5kc01xZWl3ckswdEtSX1NfcTRuMWhQX1laQzk3YTNRTERSVGVZTWtHSEVFMGowZy1BU2dKbVlNVmZ3M29KRllYbzBGXzZBTi10VVpzS3FYdVYzWUViRmRLd3pVcW1QTU51a29FTngzZndjWldacjhLSDlfZFF4SGhOQWV5ZnFudFhSYWtYUVFqQXZ1TzlnRGhzM1pBZE9abUUwS2pjMDVaUmxINHhmOFVVdmdZ?oc=5" target="_blank" rel="noopener">Livemint (Thu, 08 Oct 2026) &nearr;</a></div></div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- SECTION 1: EXECUTIVE SUMMARY -->
+  <div class="sec-wrap sec-navy">
+  <div id="exec" class="section-hdr"><span class="section-num">1</span> Executive Summary — Key Takeaways, Material Events &amp; Audit Review</div>
+  <div class="card">
+    <div class="qp-box">
+      <h4>Key Quantitative Highlights</h4>
+      <ul><li>Valuation &amp; Expectations Gap: Base DCF Fair Value INR 2,571.9 (+4.9% vs CMP); market price implies 7.3% 7Y FCF growth vs 5.8% historical sales CAGR.</li><li>Institutional Ownership Flow: FIIs/FPIs -0.06 pp QoQ (to 9.0%) vs DIIs/MFs +0.16 pp QoQ (to 13.6%) | Promoter stake 71.8%.</li><li>Capital Efficiency &amp; Benchmark Relative Return: ROIC–WACC spread +36.3% (Inc. ROIC 40.5%); 12M stock return -16.0% (-14.3% vs Nifty 50).</li><li>Audit &amp; Disclosure Balance: Clean audit — zero governance or leverage red flags; 2 constructive and 4 risk developments logged.</li></ul>
+    </div>
+    <div class="decision-box decision-amber" style="margin-top:0;margin-bottom:14px;">
+      <span class="decision-tag">Composite Quantitative Tier — SOLID FUNDAMENTALS · FULL VALUATION</span>
+      Underlying profitability and balance-sheet quality remain healthy, while current market pricing discounts limited margin of safety on base DCF assumptions.
+    </div>
+    <div class="grid-2" style="margin-bottom:0;">
+      <div>
+        <h3 style="margin:0 0 6px">Material Corporate Developments &amp; Risk Monitorables</h3>
+        <div class="subcard ai-brief-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;"><span class="pill pill-blue">Disclosure Summary</span><span class="sub">6 disclosures synthesized</span></div><div class="brief-lead">Material corporate event snapshot across 6 items (Business Headwind, Contract / Order Win, Regulatory / Legal) — balancing growth catalysts against near-term execution or margin watchpoints for TATA CONSULTANCY SERV LT.</div><ul class="summary-bullets"><li><span class="pill pill-red">Business Headwind</span> <div><div class="brief-text">TCS Shares Jump Nearly 6% as Investors Reward Growth Push Despite Margin Miss.</div><div class="brief-impact"><strong>Investor Effect:</strong> Signals near-term profitability headwinds, raising EPS sensitivity unless cost control or pricing offsets inflation.</div></div></li><li><span class="pill pill-green">Contract / Order Win</span> <div><div class="brief-text">TCS wins over ₹122 crore bid from Odisha govt for AI-enabled digital governance platform; here’s how the stock is faring.</div><div class="brief-impact"><strong>Investor Effect:</strong> Expands multi-quarter revenue visibility; track book-to-bill conversion and execution margins ahead.</div></div></li><li><span class="pill pill-red">Regulatory / Legal</span> <div><div class="brief-text">TCS Calls Employee Surveillance Reports &#x27;Baseless&#x27; Amid Laptop Monitoring Controversy.</div><div class="brief-impact"><strong>Investor Effect:</strong> Increases governance scrutiny and headline volatility until formal exchange clarification or resolution.</div></div></li></ul><div class="source-strip"><span class="source-hdr">Sources:</span> <a class="source-chip" href="https://news.google.com/rss/articles/CBMidkFVX3lxTE9pN3dMWHdNTlFZUi1IY3ZFQ2Z0M1NKNG0wUjdYaFZIaDhSYXdVNEZSVldZQVZuRTFjdWpjQ042ZXlzZlByOEZFanB5Y3ZIWUNFaVMxLTdwaWZPNEFkM0pwN2RmQ1VWWVRIQnBQNEtxejU0aHlmYUE?oc=5" target="_blank" rel="noopener">BigGo Finance (Fri, 09 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMiiAJBVV95cUxPd25NVVNfaUF5SmwtSVlDV1NaZXZ0UWJWMmoyWHM2SkRsWjZBQVdhTkFVb3JISVBKVFNFWkx4SHZWMkF1VnBaYlY3RzJoMHFLM3NtcnA3cGRhbXlfSzg4eTJXZXhyTlRXbVRnUW5hTHJzdFo2WC0xQ3dnVlFSRVFLSXI1OF8xbkxUVEV6WkRoT2t4TlM1NXBuSzNTZXU1dlJmR1FJV0Y2SFJFM1VZbmVnWmoyUm1tZ0swZG9WSTkydUtiZlpMaEk1Ym85cWpFYzhPVU1sUVRHR0d0amRoQkQ4WVpCN2M3TDhIeGlCb2pzbV93TTV2SldDelB4ZjNMenRaX2djRTQ0bFA?oc=5" target="_blank" rel="noopener">Upstox (Tue, 08 Sep 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMidkFVX3lxTE1KTzFVdWtrVWxVbk9aTTFHenRrdy1VOHRqNHVuai1qcExPazNjcHBacG5UemdZc3hmVU5LSGYySWt3aHAxWllGMUM0cEMtVEJrWEtSOFUtTmpWTFBJRnB6M28tNmlRUlRuVDdGdTc4b2pld2dISlE?oc=5" target="_blank" rel="noopener">BigGo Finance (Fri, 21 Aug 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMidkFVX3lxTE04WTg0Q2tlRXFNZ1ZmdnNYOWtxWTBSNnAyNzhuOXZuTkVHT2Y0OFFWNHBfODI2cDFlUFNyNGtYd0J0Sm9IY0dEd1NMODl5QzhVOHo1M1lseDE5V2Q5NE5YdERlS0tYbldidDNBWlNqODNYSW1PMEE?oc=5" target="_blank" rel="noopener">BigGo Finance (Thu, 17 Sep 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMidkFVX3lxTE53MnprXzBQVF90eUJYTUxsWWFlMVltRGdUTkxUSVc1dHpQODgxYWZVdGQxV0FvR2dXa1dYRnE3SUZNMGFtVnZhb0Z2MVp0b255Z2d4U0FtcHcxUW1KTmRXMXdiY0l2a29PaTdyUmt4elRHZy02Y2c?oc=5" target="_blank" rel="noopener">BigGo Finance (Sun, 13 Sep 2026) &nearr;</a></div></div>
+        
+        <div class="grid-2-tight mt-12">
+          <div class="subcard"><strong class="text-green">Key Strengths</strong><ul class="compact-list"><li>Company has a good return on equity (ROE) track record: 3 Years ROE 51.9%</li><li>Company has been maintaining a healthy dividend payout of 77.5%</li></ul></div>
+          <div class="subcard"><strong class="text-red">Key Watchpoints</strong><ul class="compact-list"><li>Stock is trading at 7.51 times its book value</li><li>The company has delivered a poor sales growth of 10.2% over past five years.</li></ul></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin:0 0 6px">Audit Opinion, Leverage, Litigation &amp; Macro Risk Review</h3>
+        <div style="margin-bottom:8px"><span class="pill pill-green">Zero Major Red Flags</span> <span class="pill pill-green">Zero Audit Warnings</span></div>
+        <div class="audit-kpis">
+          <div class="mini-stat"><div class="lbl">Audit Opinion</div><div class="v">Clean / Unmodified</div></div>
+          <div class="mini-stat"><div class="lbl">Net Debt / EBITDA</div><div class="v">0.07x</div></div>
+          <div class="mini-stat"><div class="lbl">Interest Coverage</div><div class="v">54.4x</div></div>
+          <div class="mini-stat"><div class="lbl">Short-Term Debt %</div><div class="v">16.2%</div></div>
+        </div>
+        <ul class="compact-list"><li>Baseline financial, cash-flow &amp; solvency checks passed cleanly.</li></ul>
+        <div class="decision-box decision-blue">
+          <span class="decision-tag">Credit &amp; Solvency Observation</span>
+          Unqualified Governance &amp; Solvency Profile: Audit checks are clean with manageable leverage (Net Debt/EBITDA 0.07x) and 54.4x interest coverage.
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- SECTION 2: PRICE ACTION, 5Y RETURNS (IRR/MOIC) & 5Y P/E VALUATION BANDS -->
+  <div class="sec-wrap sec-emerald">
+  <div id="price-bands" class="section-hdr"><span class="section-num">2</span> Price Action, 5-Year Returns Analysis (IRR/MOIC) &amp; Historical P/E Bands</div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+        <h3 style="margin:0">CMP, 52-Week Range &amp; Moving Averages</h3>
+        <span class="pill pill-green">Bullish Uptrend (Above 50 &amp; 200 DMA)</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:0.78rem;font-weight:700;">
+        <span>52W Low: INR 1,976.8 (24.1%)</span>
+        <span>Range Pos: 34.7%</span>
+        <span>52W High: INR 3,350.0 (-26.8%)</span>
+      </div>
+      <div class="range-track">
+        <div class="range-fill" style="width:34.7%"></div>
+        <div class="range-dot" style="left:34.7%"></div>
+      </div>
+      <div class="audit-kpis">
+        <div class="mini-stat"><div class="lbl">50-DMA</div><div class="v">INR 2,284.4</div><div class="sub">7.4% vs CMP</div></div>
+        <div class="mini-stat"><div class="lbl">200-DMA</div><div class="v">INR 2,372.3</div><div class="sub">3.4% vs CMP</div></div>
+        <div class="mini-stat"><div class="lbl">90D Technical Support</div><div class="v">INR 2,021.7</div><div class="sub">Posture: INR 2,284.4 – 2,372.3</div></div>
+        <div class="mini-stat"><div class="lbl">90D Resistance</div><div class="v">INR 2,535.0</div><div class="sub">Trailing 90D high</div></div>
+      </div>
+      <div class="chart-box"><canvas id="chartPrice"></canvas></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Technical Trend Observation</span>
+        Positive Technical Trend: Trading +7.4% above its 50-DMA (INR 2,284.4) and +3.4% above its 200-DMA (INR 2,372.3), sitting at 34.7% of its 52-week range.
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+        <h3 style="margin:0">5-Year Historical P/E Band (Mean &plusmn; 1 SD)</h3>
+        <span class="pill pill-green">Discount (-1 SD Bargain Zone)</span>
+      </div>
+      <div class="audit-kpis">
+        <div class="mini-stat"><div class="lbl">Current P/E</div><div class="v">17.2x</div><div class="sub">-29.5% vs 5Y Avg</div></div>
+        <div class="mini-stat"><div class="lbl">5Y Avg P/E</div><div class="v">24.4x</div><div class="sub">Historical median norm</div></div>
+        <div class="mini-stat"><div class="lbl">-1 SD Bargain</div><div class="v text-green">19.7x</div><div class="sub">Value comfort floor</div></div>
+        <div class="mini-stat"><div class="lbl">+1 SD Expensive</div><div class="v text-red">29.1x</div><div class="sub">Rich multiple zone</div></div>
+      </div>
+      <div class="chart-box" style="height:268px"><canvas id="chartPE"></canvas></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Historical Valuation Context</span>
+        Historically Cheap Multiple: Current P/E (17.2x) trades 29.5% below its 5Y average (24.4x) and inside the -1 SD bargain zone (19.7x).
+      </div>
+    </div>
+  </div>
+  
+  <div class="card" style="margin-bottom:0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <h3 style="margin:0">5-Year Public Equity Returns Analysis (Annualized IRR / Total Multiple MOIC)</h3>
+      <span class="pill pill-blue">Base Model: 11.1% IRR &middot; 1.69x MOIC</span>
+    </div>
+    <div class="audit-kpis">
+      <div class="mini-stat"><div class="lbl">Entry MCap / EV</div><div class="v">887,445 / 848,229</div><div class="sub">₹ Cr at CMP INR 2,452.8</div></div>
+      <div class="mini-stat"><div class="lbl">Entry EV / EBITDA</div><div class="v">11.7x</div><div class="sub">LTM EBITDA 72,274 ₹ Cr</div></div>
+      <div class="mini-stat"><div class="lbl">Base 5Y IRR / MOIC</div><div class="v ">11.1% / 1.69x</div><div class="sub">Annual return / Capital multiple</div></div>
+      <div class="mini-stat"><div class="lbl">Return Drivers</div><div class="v">+0.34x / +0.08x / +0.27x</div><div class="sub">Profit Growth / Multiple / Cash+Div</div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:0;">
+      <div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr><th>Scenario</th><th class="num">EBITDA CAGR</th><th class="num">Exit Mult <span class="sub">(EV/EB)</span></th><th class="num">Exit Equity</th><th class="num">MOIC <span class="sub">(x Cap)</span></th><th class="num">5Y IRR <span class="sub">(CAGR)</span></th></tr></thead>
+            <tbody><tr class="">
+              <td><strong>Bear (Slower Growth / De-rating)</strong></td>
+              <td class="num">2.3%</td>
+              <td class="num">10.2x</td>
+              <td class="num">1,084,460</td>
+              <td class="num"><strong>1.22x</strong></td>
+              <td class="num text-red"><strong>4.1%</strong></td>
+            </tr><tr class="highlight-row">
+              <td><strong>Base (Normalized Trajectory)</strong></td>
+              <td class="num">5.8%</td>
+              <td class="num">12.7x</td>
+              <td class="num">1,499,215</td>
+              <td class="num"><strong>1.69x</strong></td>
+              <td class="num text-amber"><strong>11.1%</strong></td>
+            </tr><tr class="">
+              <td><strong>Bull (Stronger Growth / Re-rating)</strong></td>
+              <td class="num">8.8%</td>
+              <td class="num">14.6x</td>
+              <td class="num">1,913,467</td>
+              <td class="num"><strong>2.16x</strong></td>
+              <td class="num text-green"><strong>16.6%</strong></td>
+            </tr></tbody>
+          </table>
+        </div>
+        <div class="chart-box" style="height:190px;margin-top:10px;"><canvas id="chartReturnsAttr"></canvas></div>
+      </div>
+      <div>
+        <div class="sub" style="margin-bottom:4px;"><strong>2-Way Returns Sensitivity (EBITDA Growth CAGR &times; Exit EV/EBITDA &rarr; IRR% / MOICx)</strong> &middot; Green &ge;15% | Amber 10–15% | Red &lt;10%</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr><th>CAGR / Exit</th><th class='num'>10.2x</th><th class='num'>11.4x</th><th class='num'>12.7x</th><th class='num'>14.0x</th><th class='num'>15.2x</th></tr></thead>
+            <tbody><tr><td><strong>1.8%</strong></td><td class="num cell-downside" style="white-space:nowrap;">3.6% / 1.20x</td><td class="num cell-downside" style="white-space:nowrap;">5.4% / 1.30x</td><td class="num cell-downside" style="white-space:nowrap;">7.2% / 1.42x</td><td class="num cell-downside" style="white-space:nowrap;">8.9% / 1.53x</td><td class="num cell-fair" style="white-space:nowrap;">10.4% / 1.64x</td></tr><tr><td><strong>3.8%</strong></td><td class="num cell-downside" style="white-space:nowrap;">5.4% / 1.30x</td><td class="num cell-downside" style="white-space:nowrap;">7.3% / 1.42x</td><td class="num cell-downside" style="white-space:nowrap;">9.1% / 1.55x</td><td class="num cell-fair" style="white-space:nowrap;">10.9% / 1.68x</td><td class="num cell-fair" style="white-space:nowrap;">12.4% / 1.79x</td></tr><tr><td><strong>5.8%</strong></td><td class="num cell-downside" style="white-space:nowrap;">7.3% / 1.42x</td><td class="num cell-downside" style="white-space:nowrap;">9.1% / 1.55x</td><td class="num cell-fair" style="border:2px solid var(--accent);white-space:nowrap;">11.1% / 1.69x</td><td class="num cell-fair" style="white-space:nowrap;">12.8% / 1.83x</td><td class="num cell-fair" style="white-space:nowrap;">14.4% / 1.96x</td></tr><tr><td><strong>7.8%</strong></td><td class="num cell-downside" style="white-space:nowrap;">9.1% / 1.54x</td><td class="num cell-fair" style="white-space:nowrap;">11.0% / 1.69x</td><td class="num cell-fair" style="white-space:nowrap;">13.0% / 1.84x</td><td class="num cell-fair" style="white-space:nowrap;">14.8% / 1.99x</td><td class="num cell-upside" style="white-space:nowrap;">16.4% / 2.14x</td></tr><tr><td><strong>9.8%</strong></td><td class="num cell-fair" style="white-space:nowrap;">10.9% / 1.68x</td><td class="num cell-fair" style="white-space:nowrap;">12.9% / 1.83x</td><td class="num cell-fair" style="white-space:nowrap;">14.9% / 2.00x</td><td class="num cell-upside" style="white-space:nowrap;">16.8% / 2.17x</td><td class="num cell-upside" style="white-space:nowrap;">18.4% / 2.33x</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="decision-box decision-blue">
+      <span class="decision-tag">Educational 5-Year Returns &amp; Sensitivity Model</span>
+      Educational 5-Year Returns Scenario Note: Entering at CMP (INR 2,452.8 | Entry 11.7x EV/EBITDA), the normalized base-case scenario (5.8% EBITDA CAGR, 12.7x exit multiple) models an implied 5-year IRR of 11.1% (1.69x MOIC). Return attribution decomposes net equity value creation into +0.34x from EBITDA growth, +0.08x from exit-multiple shift, and +0.27x from FCF retention &amp; dividends. Outcomes span 4.1% IRR (1.22x) to 16.6% IRR (2.16x) across regimes — for educational modeling only, not a return guarantee or advice.
+    </div>
+  </div>
+  </div>
+
+  <!-- SECTION 3: LATEST EARNINGS HIGHLIGHTS & 4Q SURPRISE ANALYSIS (BEFORE FINANCIALS) -->
+  <div class="sec-wrap sec-indigo">
+  <div id="earnings" class="section-hdr" style="justify-content:space-between;flex-wrap:wrap;">
+    <span style="display:flex;align-items:center;gap:10px;"><span class="section-num">3</span> Latest Earnings Highlights &amp; 4-Quarter Surprise Analysis (2026-09-30 vs 2026-06-30)</span>
+    <span class="pill pill-green">Verified Current (42d since Q-end)</span>
+  </div>
+  <div class="card" style="margin-bottom:14px;padding:12px 16px;">
+    <div class="audit-kpis" style="margin:0;">
+      <div class="mini-stat"><div class="lbl">Latest EPS Beat / Miss</div><div class="v ">+0.8% (In-Line)</div><div class="sub">Act INR 38.37 vs Est 38.07</div></div>
+      <div class="mini-stat"><div class="lbl">4-Quarter Beat Rate</div><div class="v">2 / 4 Quarters</div><div class="sub">Avg surprise: +1.0% · 4Q EBIT: +402 bps</div></div>
+      <div class="mini-stat"><div class="lbl">Next-Q Consensus EPS</div><div class="v">INR 38.31</div><div class="sub">+4.7% YoY expected (7 analysts)</div></div>
+      <div class="mini-stat"><div class="lbl">30D Estimate Revisions</div><div class="v">2 Up / 4 Down</div><div class="sub">Street estimate breadth (last 30d)</div></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="margin:0 0 8px">A. 4-Quarter EPS Beat/Miss &amp; Margin Progression</h3>
+      <div class="chart-box" style="height:205px"><canvas id="chartSurprise"></canvas></div>
+      <div class="overflow-x mt-12"><table><thead><tr><th>Quarter End</th><th class="num">Actual EPS</th><th class="num">Est. EPS</th><th class="num">Surprise%</th><th>Verdict</th><th class="num">Gross%</th><th class="num">EBIT%</th><th class="num">PAT%</th></tr></thead><tbody><tr>
+          <td><strong>2025-12-31</strong></td>
+          <td class="num"><strong>36.59</strong></td>
+          <td class="num">36.19</td>
+          <td class="num text-green">+1.1%</td>
+          <td><span class="pill pill-green">Beat</span></td>
+          <td class="num">45.4%</td>
+          <td class="num">21.8%</td>
+          <td class="num">15.9%</td>
+        </tr><tr>
+          <td><strong>2026-03-31</strong></td>
+          <td class="num"><strong>37.92</strong></td>
+          <td class="num">38.11</td>
+          <td class="num ">-0.5%</td>
+          <td><span class="pill pill-slate">In-Line</span></td>
+          <td class="num">41.2%</td>
+          <td class="num">26.4%</td>
+          <td class="num">19.4%</td>
+        </tr><tr>
+          <td><strong>2026-06-30</strong></td>
+          <td class="num"><strong>38.28</strong></td>
+          <td class="num">37.33</td>
+          <td class="num text-green">+2.5%</td>
+          <td><span class="pill pill-green">Beat</span></td>
+          <td class="num">44.8%</td>
+          <td class="num">25.2%</td>
+          <td class="num">18.5%</td>
+        </tr><tr>
+          <td><strong>2026-09-30</strong></td>
+          <td class="num"><strong>38.37</strong></td>
+          <td class="num">38.07</td>
+          <td class="num ">+0.8%</td>
+          <td><span class="pill pill-slate">In-Line</span></td>
+          <td class="num">40.9%</td>
+          <td class="num">25.8%</td>
+          <td class="num">19.0%</td>
+        </tr></tbody></table></div>
+      <h4 style="margin:12px 0 6px;font-size:0.86rem;">Key Operating Drivers, Beat/Miss &amp; Revisions</h4>
+      <div class="subcard" style="margin-bottom:8px;border-left:3px solid var(--accent);">
+          <strong>4-Quarter Beat/Miss &amp; Estimate Revisions</strong>
+          <div class="explain-block" style="margin-top:3px;">2026-09-30 EPS of INR 38.37 vs estimate INR 38.07 (+0.8% — In-Line); 2/4 quarters beat consensus over the trailing 4Q span. 30-day forward revisions stand at 2 Up vs 4 Down.</div>
+        </div><div class="subcard" style="margin-bottom:8px;border-left:3px solid var(--green);">
+          <strong>Revenue &amp; Topline Pace</strong>
+          <div class="explain-block" style="margin-top:3px;">2026-09-30 revenue stood at 73,188 ₹ Cr (+1.26% QoQ vs 2026-06-30).</div>
+        </div><div class="subcard" style="margin-bottom:8px;border-left:3px solid var(--green);">
+          <strong>Operating Margin Progression (EBIT bps)</strong>
+          <div class="explain-block" style="margin-top:3px;">EBIT came in at 18,890 ₹ Cr with operating margin at 25.81% (+60 bps QoQ; +402 bps across 4Q span).</div>
+        </div><div class="subcard" style="margin-bottom:8px;border-left:3px solid var(--green);">
+          <strong>Bottom-Line (PAT) &amp; Cash Realization</strong>
+          <div class="explain-block" style="margin-top:3px;">PAT settled at 13,884 ₹ Cr (18.97% net margin; +4.01% QoQ), alongside TTM CFO/EBITDA cash conversion of 0.68x.</div>
+        </div><div class="subcard" style="margin-bottom:8px;border-left:3px solid var(--accent);">
+          <strong>Concall &amp; Management Commentary Tracked</strong>
+          <div class="explain-block" style="margin-top:3px;">Latest disclosed note (Moneycontrol.com, Fri, 09 Oct 2026): TCS shares jump over 5% after Q2 results; IT stocks rally, shrug off US visa curbs on AI, growth optimism.</div>
+        </div>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 8px">B. Latest Quarter Bridge &amp; Primary Sources</h3>
+      <div class="overflow-x"><table><thead><tr><th>Line Item</th><th class="num">2026-09-30</th><th class="num">2026-06-30</th><th class="num">QoQ Var</th><th class="num">4Q / YoY</th></tr></thead><tbody><tr>
+          <td><strong>Net Sales / Revenue (₹ Cr)</strong></td>
+          <td class="num"><strong>73,188</strong></td>
+          <td class="num">72,275</td>
+          <td class="num text-green">+1.26%</td>
+          <td class="num ">—</td>
+        </tr><tr>
+          <td><strong>Operating EBIT (₹ Cr)</strong></td>
+          <td class="num"><strong>18,890</strong></td>
+          <td class="num">18,217</td>
+          <td class="num text-green">+3.7%</td>
+          <td class="num ">—</td>
+        </tr><tr>
+          <td><strong>EBIT Margin (%)</strong></td>
+          <td class="num"><strong>25.81%</strong></td>
+          <td class="num">25.21%</td>
+          <td class="num text-green">+60 bps</td>
+          <td class="num text-green">+402 bps (4Q)</td>
+        </tr><tr>
+          <td><strong>Net Profit / PAT (₹ Cr)</strong></td>
+          <td class="num"><strong>13,884</strong></td>
+          <td class="num">13,349</td>
+          <td class="num text-green">+4.01%</td>
+          <td class="num ">—</td>
+        </tr><tr>
+          <td><strong>Diluted EPS (INR)</strong></td>
+          <td class="num"><strong>38.37</strong></td>
+          <td class="num">38.28</td>
+          <td class="num text-green">+0.8% vs Est</td>
+          <td class="num ">Est 38.07</td>
+        </tr></tbody></table></div>
+      <h4 style="margin:12px 0 6px;font-size:0.86rem;">Earnings Releases, Concall Transcripts &amp; Quarterly Disclosures</h4>
+      <div class="subcard ai-brief-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;"><span class="pill pill-blue">Disclosure Summary</span><span class="sub">4 disclosures synthesized</span></div><div class="brief-lead">Quarterly earnings &amp; concall snapshot across 4 items (Results &amp; Transcripts, Quarterly Coverage) — pointing to constructive operational visibility, capital allocation, and earnings drivers for TATA CONSULTANCY SERV LT.</div><ul class="summary-bullets"><li><span class="pill pill-blue">Results &amp; Transcripts</span> <div><div class="brief-text">Company filed unaudited quarterly/half-yearly financial statements with official earnings call audio and transcripts.</div><div class="brief-impact"><strong>Investor Effect:</strong> Allows verification of management margin commentary, segment demand, and forward execution priorities.</div></div></li><li><span class="pill pill-green">Quarterly Coverage</span> <div><div class="brief-text">TCS shares jump over 5% after Q2 results; IT stocks rally, shrug off US visa curbs on AI, growth optimism.</div><div class="brief-impact"><strong>Investor Effect:</strong> Supports medium-term earnings momentum and business franchise visibility if execution holds.</div></div></li><li><span class="pill pill-green">Quarterly Coverage</span> <div><div class="brief-text">TCS Q2 net up 15% to ₹13,884 cr, AI revenue crosses $3 bn; board approves ₹12 dividend.</div><div class="brief-impact"><strong>Investor Effect:</strong> Enhances cash distribution / promoter alignment while reducing free-float supply.</div></div></li></ul><div class="source-strip"><span class="source-hdr">Sources:</span> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi6gFBVV95cUxNNDJ5Z2tNeWNFUGhqUms5QXRneEZVQ1JTTEplaERlT3JseTBfXzY3WmxWMUFFQUxIV215SVRETDZNMkFWTmpNaGxCSXlpeU5CZEtlR09famhxamo2QU45MDJ4QnNpeHF1aGN5bG5uUzVGTFMzekpPZXF3Tng1T1lvLTd0RFViWnN5MzR2dTJRa3Z1X3FXMzdEazgzcnpmRGJaRWh3eDVkSmFuYjlQb3puTTdiRmZ3U3dSV2t0SDN6ajRMejhydzg0RDNjSjFIXzI3MEZrT09KdzRqVVZ4XzM1Znd2QUpuUTdJWEHSAe8BQVVfeXFMUGtJYTl0RkYtbzRadGZnYm96YUd0NEJZckxvWlR4bllkLUlKWDM2dWNyalExalJQSWowNXdvczE3SGJySzR5eHJ5QWI4QmY1Rm81MWp4OTJnTEJJZHB4VWYxUUc2aTVTdzc3eUVLZzFIV3JUNkxWcmJQUzlNZlFfUlBfVXdlZXhCNHdPMHdCV05WR3FlaVVDSzc4M04xcFJlQWkwN3JWZHdDMmlBSW9KT19zb1hDOXNmOWxkUzJ5TW1zS0FkTXcyMFd4TGM0ZDc4M2VoYWFBZFZfRG5NNWI1THJvek9UOEFsRUdBbU85aDA?oc=5" target="_blank" rel="noopener">Moneycontrol.com (Fri, 09 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi1wFBVV95cUxNRFFKcUJMTXA2NVVJUWIwbzB5UkwxVkJ0eHRpTGsxaGNHN0Q1MXdqemVwcm9HMng2eFZDVldhbGRmbF9qLWdvbEZKZVRHbm01TDNfWHZEMEh4TVlsQ0Q3cDNKTU9QclBjbDNtN2swS2drYVZ0Q1l5UDAxNTEta1QzbnNDQ1hGNDVJbjctNGVTZlVSdEtzM0diX19fdXd6OUsyWkVHVnhMcG5QMEpGaTJJS3V2Zmpqb3dqbTZQanF1RWxzdWZmc2xhWWc1bmdnc0VKbDJzSXZIQQ?oc=5" target="_blank" rel="noopener">Investing.com India (Thu, 08 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi2gFBVV95cUxOaS1FVE9hVjU3cU85dUZ2Z2xCa2hxb0x1YXNNZjRYMW01V0dwZUxUUHJSeC1FaTloMXQ0WDN4elc1ZUlWeHB1RGV0SDEtcmZtMV94V1JaWXFJQVRRZG1QUHd1dld3VXB4eEY1Z2t1R19wTkUwell3N2NvOVc0ZHNkckJoQWxnY0laYVhPU09EWmt1V2FzaXFIUTdFNkRsOVltS1RwcmJBbGdoYzlucHVWczlLNFRoaExqQUZLYnhySUZOV19aZ1FzOWdvNU9sN1ROdmRYMFJGSzNId9IB4AFBVV95cUxPbHZGQ0w1QWpjTF9fUmdVMTZ5MDZaRDhad3U2T0sxNlNXcFBOcnNXLTYyRENCQ29DbUIzOHlfQlZkZlhxZjRPUVRSbTZIUWhpWGk1eWYzS0dXQ0N5RHJEWlZ3ZEF3S3RkTWozVjhkbU9Td1JyUU55d09LS1E3RGIzb2lKQ3RYRU5QVUpRbG95OXRqcV9TYUZqM0NhX3VaOFpTdWVUMVN4M21EV0tnU2U5aC1XeTVMZ1BnS01vY0x2ejJNd2VfUzRWcGV2Z0dpelUxVThYOTB3MnVBbHU1ZVdLNw?oc=5" target="_blank" rel="noopener">The Hindu (Thu, 08 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMifkFVX3lxTE51amhCNFBDTXBIU3JySndCbEtGM2liNG1CSkU3YTM0U1VWaTZSSjhtYWNJTy1GaWxuclFUTFQxNXhkRkxPY3lNUDd1S1Z1aThlb1RCSGRYcC1laHNHUWxZck1lT2UySGQwelZZZkE1M0VpbXlfT0d2dGxEdHFKdw?oc=5" target="_blank" rel="noopener">NiftyTrader (Thu, 01 Oct 2026) &nearr;</a></div></div>
+      <div class="subcard mt-12" style="font-size:0.78rem;"><strong>Primary Sources &amp; Attribution:</strong> <a href="https://finance.yahoo.com/quote/TCS.NS/financials" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none;">Quarterly Statements (2026-09-30) (2026-09-30)</a> &middot; <a href="https://finance.yahoo.com/quote/TCS.NS/analysis" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none;">Street Consensus &amp; EPS Surprise Feed (2026-11-11)</a> &middot; <a href="https://news.google.com/rss/articles/CBMi6gFBVV95cUxNNDJ5Z2tNeWNFUGhqUms5QXRneEZVQ1JTTEplaERlT3JseTBfXzY3WmxWMUFFQUxIV215SVRETDZNMkFWTmpNaGxCSXlpeU5CZEtlR09famhxamo2QU45MDJ4QnNpeHF1aGN5bG5uUzVGTFMzekpPZXF3Tng1T1lvLTd0RFViWnN5MzR2dTJRa3Z1X3FXMzdEazgzcnpmRGJaRWh3eDVkSmFuYjlQb3puTTdiRmZ3U3dSV2t0SDN6ajRMejhydzg0RDNjSjFIXzI3MEZrT09KdzRqVVZ4XzM1Znd2QUpuUTdJWEHSAe8BQVVfeXFMUGtJYTl0RkYtbzRadGZnYm96YUd0NEJZckxvWlR4bllkLUlKWDM2dWNyalExalJQSWowNXdvczE3SGJySzR5eHJ5QWI4QmY1Rm81MWp4OTJnTEJJZHB4VWYxUUc2aTVTdzc3eUVLZzFIV3JUNkxWcmJQUzlNZlFfUlBfVXdlZXhCNHdPMHdCV05WR3FlaVVDSzc4M04xcFJlQWkwN3JWZHdDMmlBSW9KT19zb1hDOXNmOWxkUzJ5TW1zS0FkTXcyMFd4TGM0ZDc4M2VoYWFBZFZfRG5NNWI1THJvek9UOEFsRUdBbU85aDA?oc=5" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none;">Moneycontrol.com: TCS shares jump over 5% after Q2 results; IT stocks rally, (Fri, 09 Oct 2026)</a> &middot; <a href="https://news.google.com/rss/articles/CBMi1wFBVV95cUxNRFFKcUJMTXA2NVVJUWIwbzB5UkwxVkJ0eHRpTGsxaGNHN0Q1MXdqemVwcm9HMng2eFZDVldhbGRmbF9qLWdvbEZKZVRHbm01TDNfWHZEMEh4TVlsQ0Q3cDNKTU9QclBjbDNtN2swS2drYVZ0Q1l5UDAxNTEta1QzbnNDQ1hGNDVJbjctNGVTZlVSdEtzM0diX19fdXd6OUsyWkVHVnhMcG5QMEpGaTJJS3V2Zmpqb3dqbTZQanF1RWxzdWZmc2xhWWc1bmdnc0VKbDJzSXZIQQ?oc=5" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none;">Investing.com India: Earnings call transcript: TCS posts steady Q2 2026 growth  (Thu, 08 Oct 2026)</a> &middot; <a href="https://news.google.com/rss/articles/CBMi2gFBVV95cUxOaS1FVE9hVjU3cU85dUZ2Z2xCa2hxb0x1YXNNZjRYMW01V0dwZUxUUHJSeC1FaTloMXQ0WDN4elc1ZUlWeHB1RGV0SDEtcmZtMV94V1JaWXFJQVRRZG1QUHd1dld3VXB4eEY1Z2t1R19wTkUwell3N2NvOVc0ZHNkckJoQWxnY0laYVhPU09EWmt1V2FzaXFIUTdFNkRsOVltS1RwcmJBbGdoYzlucHVWczlLNFRoaExqQUZLYnhySUZOV19aZ1FzOWdvNU9sN1ROdmRYMFJGSzNId9IB4AFBVV95cUxPbHZGQ0w1QWpjTF9fUmdVMTZ5MDZaRDhad3U2T0sxNlNXcFBOcnNXLTYyRENCQ29DbUIzOHlfQlZkZlhxZjRPUVRSbTZIUWhpWGk1eWYzS0dXQ0N5RHJEWlZ3ZEF3S3RkTWozVjhkbU9Td1JyUU55d09LS1E3RGIzb2lKQ3RYRU5QVUpRbG95OXRqcV9TYUZqM0NhX3VaOFpTdWVUMVN4M21EV0tnU2U5aC1XeTVMZ1BnS01vY0x2ejJNd2VfUzRWcGV2Z0dpelUxVThYOTB3MnVBbHU1ZVdLNw?oc=5" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none;">The Hindu: TCS Q2 net up 15% to ₹13,884 cr, AI revenue crosses $3 bn; (Thu, 08 Oct 2026)</a></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Quarterly Result Takeaway</span>
+        4Q &amp; Latest Quarter Synthesis (2026-09-30): Topline moved +1.26% QoQ to 73,188 ₹ Cr with EBIT margin at 25.81% (+60 bps / +0.60% pts QoQ) and PAT at 13,884 ₹ Cr. EPS beat/miss tracked at +0.8% (2/4 beats across 4Q). Monitor margin trajectory and estimate revisions.
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- SECTION 4: FINANCIAL SUMMARY (FULL-WIDTH CHART + TABLE PAIRS, ZERO CRAMPING) -->
+  <div class="sec-wrap sec-cobalt">
+  <div id="financials" class="section-hdr"><span class="section-num">4</span> Financial Track Record &amp; Cash Conversion (₹ Cr)</div>
+  <div class="card">
+    <h3 style="margin:0 0 10px">A. 4-Year Year-on-Year Financial Growth &amp; Free Cash Flow</h3>
+    <div class="split-40-60">
+      <div class="chart-box"><canvas id="chartAnnual"></canvas></div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Year</th><th class="num">Revenue</th><th class="num">YoY%</th><th class="num">EBITDA</th><th class="num">OPM%</th><th class="num">Profit</th><th class="num">YoY%</th><th class="num">Op. Cash</th><th class="num">Capex</th><th class="num">Free Cash</th></tr></thead>
+          <tbody><tr>
+          <td><strong>FY2023</strong></td>
+          <td class="num">225,458</td>
+          <td class="num">—</td>
+          <td class="num">62,708</td>
+          <td class="num">27.8%</td>
+          <td class="num">42,147</td>
+          <td class="num">—</td>
+          <td class="num">41,965</td>
+          <td class="num">3,100</td>
+          <td class="num"><strong>38,865</strong></td>
+        </tr><tr>
+          <td><strong>FY2024</strong></td>
+          <td class="num">240,893</td>
+          <td class="num">6.8%</td>
+          <td class="num">67,760</td>
+          <td class="num">28.1%</td>
+          <td class="num">45,908</td>
+          <td class="num">8.9%</td>
+          <td class="num">44,338</td>
+          <td class="num">2,674</td>
+          <td class="num"><strong>41,664</strong></td>
+        </tr><tr>
+          <td><strong>FY2025</strong></td>
+          <td class="num">255,324</td>
+          <td class="num">6.0%</td>
+          <td class="num">71,369</td>
+          <td class="num">27.9%</td>
+          <td class="num">48,553</td>
+          <td class="num">5.8%</td>
+          <td class="num">48,908</td>
+          <td class="num">3,937</td>
+          <td class="num"><strong>44,971</strong></td>
+        </tr><tr>
+          <td><strong>FY2026</strong></td>
+          <td class="num">267,021</td>
+          <td class="num">4.6%</td>
+          <td class="num">72,274</td>
+          <td class="num">27.1%</td>
+          <td class="num">49,210</td>
+          <td class="num">1.4%</td>
+          <td class="num">52,094</td>
+          <td class="num">4,146</td>
+          <td class="num"><strong>47,948</strong></td>
+        </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="decision-box decision-blue">
+      <span class="decision-tag">Multi-Year Operating &amp; Cash Summary</span>
+      Self-Funding Operating Profile: Revenue grew +4.58% YoY in FY2026 alongside positive Free Cash Flow (47,948 ₹ Cr); higher top-line acceleration remains a key fundamental monitorable.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 10px">B. Last 4 Quarters Trajectory (Quarter-on-Quarter)</h3>
+    <div class="split-40-60">
+      <div class="chart-box"><canvas id="chartQuarterly"></canvas></div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Quarter End</th><th class="num">Revenue</th><th class="num">QoQ%</th><th class="num">YoY%</th><th class="num">EBIT</th><th class="num">Margin%</th><th class="num">Profit</th><th class="num">QoQ%</th></tr></thead>
+          <tbody><tr>
+          <td><strong>2025-12-31</strong></td>
+          <td class="num">67,087</td>
+          <td class="num">5.8%</td>
+          <td class="num">—</td>
+          <td class="num">14,616</td>
+          <td class="num">21.8%</td>
+          <td class="num">10,657</td>
+          <td class="num">-16.5%</td>
+        </tr><tr>
+          <td><strong>2026-03-31</strong></td>
+          <td class="num">70,698</td>
+          <td class="num">5.4%</td>
+          <td class="num">—</td>
+          <td class="num">18,627</td>
+          <td class="num">26.4%</td>
+          <td class="num">13,718</td>
+          <td class="num">28.7%</td>
+        </tr><tr>
+          <td><strong>2026-06-30</strong></td>
+          <td class="num">72,275</td>
+          <td class="num">2.2%</td>
+          <td class="num">13.9%</td>
+          <td class="num">18,217</td>
+          <td class="num">25.2%</td>
+          <td class="num">13,349</td>
+          <td class="num">-2.7%</td>
+        </tr><tr>
+          <td><strong>2026-09-30</strong></td>
+          <td class="num">73,188</td>
+          <td class="num">1.3%</td>
+          <td class="num">—</td>
+          <td class="num">18,890</td>
+          <td class="num">25.8%</td>
+          <td class="num">13,884</td>
+          <td class="num">4.0%</td>
+        </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="decision-box decision-blue">
+      <span class="decision-tag">Quarterly Margin &amp; Growth Summary</span>
+      Steady Sequential Execution: Revenue grew +1.26% QoQ in 2026-09-30 with operating margin holding at 25.81%; sequential revenue acceleration remains a key watchpoint.
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <h3 style="margin:0">C. Operating Segment Analysis — Consolidated (2026-09-30)</h3>
+      <a href="https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1734607_08102026100810_WEB.xml" target="_blank" rel="noopener" class="pill pill-blue" style="text-decoration:none;">Ind-AS 108 XBRL</a>
+    </div>
+    <div class="split-40-60">
+      <div class="chart-box" style="height:240px"><canvas id="chartSegments"></canvas></div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Segment</th><th class="num">Revenue</th><th class="num">Rev Mix</th><th class="num">QoQ%</th><th class="num">YoY%</th><th class="num">EBIT</th><th class="num">EBIT Mix</th><th class="num">Margin%</th></tr></thead>
+          <tbody><tr>
+              <td><strong>Banking, Financial Services and Insurance</strong></td>
+              <td class="num">28,882</td>
+              <td class="num">39.5%</td>
+              <td class="num text-green">3.2%</td>
+              <td class="num text-green">12.3%</td>
+              <td class="num">7,351</td>
+              <td class="num">39.1%</td>
+              <td class="num"><strong>25.5%</strong></td>
+              
+            </tr><tr>
+              <td><strong>Consumer Business</strong></td>
+              <td class="num">11,137</td>
+              <td class="num">15.2%</td>
+              <td class="num text-red">-0.1%</td>
+              <td class="num text-green">7.6%</td>
+              <td class="num">3,316</td>
+              <td class="num">17.6%</td>
+              <td class="num"><strong>29.8%</strong></td>
+              
+            </tr><tr>
+              <td><strong>Communication, Media and Technology</strong></td>
+              <td class="num">10,862</td>
+              <td class="num">14.8%</td>
+              <td class="num text-green">2.3%</td>
+              <td class="num text-green">10.8%</td>
+              <td class="num">2,913</td>
+              <td class="num">15.5%</td>
+              <td class="num"><strong>26.8%</strong></td>
+              
+            </tr><tr>
+              <td><strong>Life Sciences and Healthcare</strong></td>
+              <td class="num">7,589</td>
+              <td class="num">10.4%</td>
+              <td class="num text-green">2.2%</td>
+              <td class="num text-green">10.2%</td>
+              <td class="num">1,918</td>
+              <td class="num">10.2%</td>
+              <td class="num"><strong>25.3%</strong></td>
+              
+            </tr><tr>
+              <td><strong>Manufacturing</strong></td>
+              <td class="num">7,346</td>
+              <td class="num">10.0%</td>
+              <td class="num text-green">3.3%</td>
+              <td class="num text-green">10.8%</td>
+              <td class="num">2,044</td>
+              <td class="num">10.9%</td>
+              <td class="num"><strong>27.8%</strong></td>
+              
+            </tr><tr>
+              <td><strong>Others</strong></td>
+              <td class="num">7,372</td>
+              <td class="num">10.1%</td>
+              <td class="num text-red">-7.7%</td>
+              <td class="num text-green">14.9%</td>
+              <td class="num">1,273</td>
+              <td class="num">6.8%</td>
+              <td class="num"><strong>17.3%</strong></td>
+              
+            </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="decision-box decision-blue">
+      <span class="decision-tag">Segment Mix &amp; Margin Observation</span>
+      Banking, Financial Services and Insurance leads topline (39.5% of revenue); with highest operating margin in Consumer Business (29.8%). Fastest YoY topline momentum came from Banking, Financial Services and Insurance (+12.3% YoY).
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="margin:0 0 6px">D. Working Capital &amp; Cash Conversion Cycle</h3>
+      <div class="subcard" style="margin-bottom:8px;"><strong>Annual CFO / Net Profit Conversion:</strong> <span class="sub"><strong>FY2023:</strong> 1.00x · <strong>FY2024:</strong> 0.97x · <strong>FY2025:</strong> 1.01x · <strong>FY2026:</strong> 1.06x</span></div>
+      <div class="overflow-x"><table><thead><tr><th>Efficiency Metric</th><th class='num'>Mar 2022</th><th class='num'>Mar 2023</th><th class='num'>Mar 2024</th><th class='num'>Mar 2025</th><th class='num'>Mar 2026</th></tr></thead><tbody><tr><td><strong>Debtor Days</strong></td><td class='num'>80</td><td class='num'>81</td><td class='num'>81</td><td class='num'>84</td><td class='num'>93</td></tr><tr><td><strong>Inventory Days</strong></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td></tr><tr><td><strong>Days Payable</strong></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td></tr><tr><td><strong>Cash Conversion Cycle</strong></td><td class='num'>80</td><td class='num'>81</td><td class='num'>81</td><td class='num'>84</td><td class='num'>93</td></tr><tr><td><strong>ROCE %</strong></td><td class='num'>54.0%</td><td class='num'>59.0%</td><td class='num'>64.0%</td><td class='num'>65.0%</td><td class='num'>63.0%</td></tr></tbody></table></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Working Capital Efficiency</span>
+        Strong Cash Realization (CFO/PAT 1.06x): Accounting profits convert efficiently into bank cash; Debtor Days sit at 93 days with a 93-day Cash Conversion Cycle.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 6px">E. Sector Peer Valuation Multiples &amp; Quality Snapshot</h3>
+      <div class="chart-box" style="height:175px"><canvas id="chartPeers"></canvas></div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Company</th><th class="num">Score</th><th class="num">ROIC</th><th class="num">Inc.ROIC</th><th class="num">Cash Conv.</th><th class="num">EV/NOPAT</th><th class="num">FCF Yld</th></tr></thead>
+          <tbody><tr class="">
+          <td><strong>KPITTECH.NS</strong><div class="sub">KPIT TECHNOLOGIES LIMI</div></td>
+          <td class="num">75.5</td>
+          <td class="num">17.3%</td>
+          <td class="num">13.2%</td>
+          <td class="num">0.93x</td>
+          <td class="num">21.0x</td>
+          <td class="num">7.02%</td>
+        </tr><tr class="highlight-row">
+          <td><strong>TCS.NS</strong><div class="sub">TATA CONSULTANCY SERV </div></td>
+          <td class="num">67.9</td>
+          <td class="num">47.0%</td>
+          <td class="num">40.5%</td>
+          <td class="num">0.68x</td>
+          <td class="num">17.0x</td>
+          <td class="num">5.40%</td>
+        </tr><tr class="">
+          <td><strong>PERSISTENT.NS</strong><div class="sub">PERSISTENT SYSTEMS LTD</div></td>
+          <td class="num">59.1</td>
+          <td class="num">24.5%</td>
+          <td class="num">26.9%</td>
+          <td class="num">0.61x</td>
+          <td class="num">48.7x</td>
+          <td class="num">1.58%</td>
+        </tr><tr class="">
+          <td><strong>COFORGE.NS</strong><div class="sub">COFORGE LIMITED</div></td>
+          <td class="num">53.7</td>
+          <td class="num">18.2%</td>
+          <td class="num">14.1%</td>
+          <td class="num">0.65x</td>
+          <td class="num">52.5x</td>
+          <td class="num">1.18%</td>
+        </tr></tbody>
+        </table>
+      </div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Peer Comparison Context</span>
+        Among direct peers, KPITTECH.NS currently scores highest (75.5/100, 17.3% ROIC) versus TCS.NS (67.9/100, 47.0% ROIC). Compare capital efficiency, cash conversion, and multiples side by side.
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- SECTION 5: INTRINSIC VALUATION (DCF + SOTP + SENSITIVITY) -->
+  <div class="sec-wrap sec-amber">
+  <div id="valuation" class="section-hdr"><span class="section-num">5</span> Intrinsic Valuation (Interactive DCF &amp; SOTP Multiples)</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="margin:0 0 8px">5-Year FCFF DCF Forecast &amp; Sensitivity Simulator (₹ Cr)</h3>
+      <div class="sim-panel">
+        <div class="sim-out">
+          <div><div class="lbl sub">SIMULATED MODEL VALUE (SENSITIVITY OUTPUT)</div><strong id="simFairPrice" style="font-size:1.32rem;">INR 2,571.9</strong></div>
+          <div><div class="lbl sub">IMPLIED VARIANCE VS CMP</div><strong id="simUpside" style="font-size:1.15rem;">+4.9%</strong></div>
+          <button class="btn" onclick="resetSim()">Reset Base Case</button>
+        </div>
+        <div class="sim-row">
+          <div><label>Yr1 Revenue Growth: <span id="lblG">5.8%</span></label><input id="slG" type="range" min="2" max="22" step="0.5" value="5.8" oninput="runDcfSim()" /></div>
+          <div><label>EBIT Operating Margin: <span id="lblM">24.98%</span></label><input id="slM" type="range" min="5" max="40" step="0.5" value="24.98" oninput="runDcfSim()" /></div>
+          <div><label>Discount Rate (WACC): <span id="lblW">10.04%</span></label><input id="slW" type="range" min="8.5" max="15.5" step="0.25" value="10.04" oninput="runDcfSim()" /></div>
+        </div>
+      </div>
+      <div class="chart-box" style="height:200px"><canvas id="chartDCF"></canvas></div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Forecast</th><th class="num">Growth%</th><th class="num">Est. Rev</th><th class="num">Op. Profit <span class="sub">(NOPAT)</span></th><th class="num">Capex+WC <span class="sub">(Reinv.)</span></th><th class="num">Free Cash</th><th class="num">Today's PV</th></tr></thead>
+          <tbody><tr>
+          <td><strong>Year 1</strong></td>
+          <td class="num">5.8%</td>
+          <td class="num">282,508</td>
+          <td class="num">53,305</td>
+          <td class="num">10,661</td>
+          <td class="num"><strong>42,644</strong></td>
+          <td class="num">38,753</td>
+        </tr><tr>
+          <td><strong>Year 2</strong></td>
+          <td class="num">5.7%</td>
+          <td class="num">298,622</td>
+          <td class="num">56,345</td>
+          <td class="num">10,846</td>
+          <td class="num"><strong>45,499</strong></td>
+          <td class="num">37,575</td>
+        </tr><tr>
+          <td><strong>Year 3</strong></td>
+          <td class="num">5.6%</td>
+          <td class="num">315,369</td>
+          <td class="num">59,505</td>
+          <td class="num">11,008</td>
+          <td class="num"><strong>48,496</strong></td>
+          <td class="num">36,396</td>
+        </tr><tr>
+          <td><strong>Year 4</strong></td>
+          <td class="num">5.5%</td>
+          <td class="num">332,752</td>
+          <td class="num">62,785</td>
+          <td class="num">11,144</td>
+          <td class="num"><strong>51,640</strong></td>
+          <td class="num">35,220</td>
+        </tr><tr>
+          <td><strong>Year 5</strong></td>
+          <td class="num">5.4%</td>
+          <td class="num">350,774</td>
+          <td class="num">66,185</td>
+          <td class="num">11,252</td>
+          <td class="num"><strong>54,934</strong></td>
+          <td class="num">34,048</td>
+        </tr></tbody>
+        </table>
+      </div>
+      <div class="decision-box decision-amber">
+        <span class="decision-tag">DCF Fair Value Assessment</span>
+        Near Base-Case Intrinsic Value: Estimated DCF fair value (INR 2,571.9) lies within single digits (+4.9%) of CMP (INR 2,452.8), reflecting balanced base-case pricing.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px">DCF Fair Price Sensitivity Matrix (vs CMP INR 2,452.8)</h3>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Discount \ Growth</th><th class='num'>Growth = 4.0%</th><th class='num'>Growth = 4.5%</th><th class='num'>Growth = 5.0%</th><th class='num'>Growth = 5.5%</th></tr></thead>
+          <tbody><tr><td><strong>Discount 9.04%</strong></td><td class='num cell-fair'>INR 2,632.3</td><td class='num cell-upside'>INR 2,878.3</td><td class='num cell-upside'>INR 3,185.1</td><td class='num cell-upside'>INR 3,578.5</td></tr><tr><td><strong>Discount 9.54%</strong></td><td class='num cell-fair'>INR 2,402.7</td><td class='num cell-fair'>INR 2,601.8</td><td class='num cell-upside'>INR 2,844.7</td><td class='num cell-upside'>INR 3,147.6</td></tr><tr><td><strong>Discount 10.04%</strong></td><td class='num cell-fair'>INR 2,211.2</td><td class='num cell-fair'>INR 2,375.3</td><td class='num cell-fair'>INR 2,571.9</td><td class='num cell-fair'>INR 2,811.7</td></tr><tr><td><strong>Discount 10.54%</strong></td><td class='num cell-downside'>INR 2,048.9</td><td class='num cell-downside'>INR 2,186.3</td><td class='num cell-fair'>INR 2,348.3</td><td class='num cell-fair'>INR 2,542.5</td></tr></tbody>
+        </table>
+      </div>
+      <h3 style="margin:16px 0 6px">EV / EBITDA &amp; Conglomerate SOTP Valuation Ladder</h3>
+      <div class="overflow-x"><table><thead><tr><th>Blended Multiple</th><th class="num">Implied Fair Price</th><th class="num">vs CMP</th></tr></thead><tbody><tr>
+          <td><strong>10x EV/EBITDA</strong></td>
+          <td class="num">INR 2,106.0</td>
+          <td class="num text-red">-14.1%</td>
+        </tr><tr>
+          <td><strong>12x EV/EBITDA</strong></td>
+          <td class="num">INR 2,505.5</td>
+          <td class="num text-green">2.1%</td>
+        </tr><tr>
+          <td><strong>14x EV/EBITDA</strong></td>
+          <td class="num">INR 2,905.0</td>
+          <td class="num text-green">18.4%</td>
+        </tr><tr>
+          <td><strong>16x EV/EBITDA</strong></td>
+          <td class="num">INR 3,304.5</td>
+          <td class="num text-green">34.7%</td>
+        </tr></tbody></table></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Multiple &amp; SOTP Assessment</span>
+        Clean Operating Lens: Reinvestment needs are well-balanced relative to cash generation; cross-checking EV/EBITDA (10x–16x trailing EBITDA of 72,274 ₹ Cr) confirms the DCF valuation range.
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- SECTION 6: SHAREHOLDING, PROMOTER/FPI ACTIONS, NSE FILINGS, RATINGS & BENCHMARK PERFORMANCE -->
+  <div class="sec-wrap sec-teal">
+  <div id="ownership" class="section-hdr"><span class="section-num">6</span> Shareholding, Promoter &amp; FPI Actions, Deals, Ratings &amp; Benchmark Performance</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="margin:0 0 8px">Shareholding Trend &amp; Institutional Flows (Sep 2026)</h3>
+      <div class="audit-kpis">
+        <div class="mini-stat"><div class="lbl">Promoters</div><div class="v">71.77%</div><div class="sub">QoQ: +0.0 pp</div></div>
+        <div class="mini-stat"><div class="lbl">Foreign (FPIs)</div><div class="v">9.01%</div><div class="sub">QoQ: -0.06 pp</div></div>
+        <div class="mini-stat"><div class="lbl">Domestic (MFs/DII)</div><div class="v">13.57%</div><div class="sub">QoQ: +0.16 pp</div></div>
+        <div class="mini-stat"><div class="lbl">Public / Inst.</div><div class="v">5.66%</div><div class="sub">Holders: 2,579,099</div></div>
+      </div>
+      <div class="chart-box" style="height:190px"><canvas id="chartShareholding"></canvas></div>
+      <div class="overflow-x"><table><thead><tr><th>Holder Category</th><th class='num'>Sep 2025</th><th class='num'>Dec 2025</th><th class='num'>Mar 2026</th><th class='num'>Jun 2026</th><th class='num'>Sep 2026</th></tr></thead><tbody><tr><td><strong>Promoters (%)</strong></td><td class='num'>71.77%</td><td class='num'>71.77%</td><td class='num'>71.77%</td><td class='num'>71.77%</td><td class='num'>71.77%</td></tr><tr><td><strong>Foreign / FPIs (%)</strong></td><td class='num'>10.33%</td><td class='num'>10.37%</td><td class='num'>9.66%</td><td class='num'>9.07%</td><td class='num'>9.01%</td></tr><tr><td><strong>Domestic / MFs (%)</strong></td><td class='num'>12.64%</td><td class='num'>12.81%</td><td class='num'>13.34%</td><td class='num'>13.41%</td><td class='num'>13.57%</td></tr><tr><td><strong>Public (%)</strong></td><td class='num'>5.21%</td><td class='num'>4.98%</td><td class='num'>5.16%</td><td class='num'>5.69%</td><td class='num'>5.66%</td></tr></tbody></table></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Ownership &amp; FPI Flow Assessment</span>
+        Domestic Absorption of Foreign Selling: Domestic mutual funds are buying what foreign funds trimmed. Foreign Investors (FPIs) trimmed stake by -0.06 pp last quarter (now 9.01%); Domestic Funds (DIIs/MFs) accumulated +0.16 pp (now 13.57%); Promoter holding stays steady at 71.77%.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px">Exchange Filings, Promoter Activity &amp; Bulk / Block Deals</h3>
+      <div class="subcard ai-brief-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;"><span class="pill pill-blue">Disclosure Summary</span><span class="sub">6 disclosures synthesized</span></div><div class="brief-lead">Exchange filing &amp; ownership snapshot across 6 items (Updates, General Updates, Buyback / Capital Return) — pointing to constructive operational visibility, capital allocation, and earnings drivers for TATA CONSULTANCY SERV LT.</div><ul class="summary-bullets"><li><span class="pill pill-blue">Updates</span> <div><div class="brief-text">TCS BaNCS for Treasury marks its entry into Sri Lanka with Indian Bank.</div><div class="brief-impact"><strong>Investor Effect:</strong> Useful operational context to monitor alongside quarterly revenue, margin, and cash-flow disclosures.</div></div></li><li><span class="pill pill-blue">General Updates</span> <div><div class="brief-text">completion of acquisition of BBY Services India LLP.</div><div class="brief-impact"><strong>Investor Effect:</strong> Builds incremental scale or capability; monitor integration execution, funding mix, and acquisition payback ROCE.</div></div></li><li><span class="pill pill-green">Buyback / Capital Return</span> <div><div class="brief-text">Dividend, bonus, split, buyback, spin off in October: TCS, NMDC, PTC India, JSW Dulux among key corporate actions.</div><div class="brief-impact"><strong>Investor Effect:</strong> Enables standalone subsidiary value discovery and potential sum-of-the-parts re-rating.</div></div></li></ul><div class="source-strip"><span class="source-hdr">Sources:</span> <a class="source-chip" href="https://nsearchives.nseindia.com/corporate/TCS_CORPCS_19102026112258_PR_19Oct26_signed.pdf" target="_blank" rel="noopener">NSE Official Filing (19-Oct-2026) &nearr;</a> <a class="source-chip" href="https://nsearchives.nseindia.com/corporate/TCS_CORPCS_15102026133009_SEInt15102026.pdf" target="_blank" rel="noopener">NSE Official Filing (15-Oct-2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMijAJBVV95cUxNUU9idElubWxpMkNLUnhiazVZREozX09sdDUtcXpYR2ExcWVxN3I1UzI2enVTc3JaaVJFREh1RC04ZENHSklmLUoyWjZmRkpoZVp5S0lXS0FYMk1vQnYtbXlsdGtKaEJlMnVreC1NWDQteWU2UjJnUGxRT1hLOU1TamV3N3owSEtJbk1jV3BSbk9yX2NnU1RXcFkxVkJFdmNvSnU2aHlPRUQ5UXZIMXV4NW5sNDNxeFZjOElaR2EyekdBT1JYTjM1eXg3QkdNNmN1ejlUdm5zcmV6ZUNaZWZDSEJ1MFZVUDRKWUNodk84SUNsNEFmMEJlWl9lMmhVYUxKLWxaZklfVHZPWExv0gGSAkFVX3lxTE9hX0k5YXllMnhacDloWm9zY0tyRU1GY2t2cUhSVTZWNnBzVV9sNGNYanlMdjJWMng5VEZNd1N5akNuNWFKUzlneXh0RUo2ZHhsR3lpTURXeFh3ZnZHakI5cmJOTGxXcVd4ckJoR3RqWWZIUXJXV0dETkczb0NJbzlTYkZUb2NsQmRwTGRBOHdHQU8zanhyZjZHalRpWkU4cmdPUXRvU2MyUG9FTE42dDQ5N3FhRmFCTGZwdExDb0NMTFZoa2ZWbkhWZmJwM08wUlRFektNb1RSR0tEcG1pNmpzSXRqUmtnVWJNQnhBRjUtVlpsNEZOS3MxVFRGUEU2SlVVb2hDUnFYYTk4SU1JVG9XY3c?oc=5" target="_blank" rel="noopener">Livemint (Fri, 02 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi7gFBVV95cUxOOUxUTTJuQ09tOVNZUVdMcmhISDlTSXNrWFBsakk2MHZ3UFRsX0xvRzJ5SG5MTmN4enVpUXZVUGl6VGRuaS04cE1TakVaUU9jcnhra3BGZy1Db3dyXzJrVHdHX3ZWV3c5bzFjMjhFRzh0ZVRVWUx6blZJVGZLQlhxRC16eUtKM3NKTXVORmFEVkZkVktlenF0RExrMzhEeG9TVkpRVURzSy1yM1RSTndNekJ0X3NfNmdCYTZ1aXUxdmtpd3hxYmlKQnlsaS1MbjZaYjE2N0FHMzNrNzZoLTZESUh2UEtWdGY1WUthNF9B?oc=5" target="_blank" rel="noopener">Goodreturns (Sun, 12 Jul 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi6gFBVV95cUxQX01RX3RjandnY0o1dmhDTXBMcHp6YVdhdnVkSWotcGdhYVhOcmJENU5aY19IMVBxcGlaSVZ3Y3RhRDhVN3lkODNVZk9nOHZfbGpGMHViVEZlLUZ1THgxOGRkZTkwNkpCZDZKWUg4RmxITWRYS0dWaXFxcHV5Y3Y2cTZHbW9BSFRTem0zdm5OTzZhMkZHUW41U0V2dmg1RVBHcjZ6MDFTOXBESVZWdWlaUDFGRnZfMHlmLUlWa0xwU3E5bFVHV3BKRWFkN1VvSHowM0p5dEtYZ19FLTlQOFR6a3B0ZmVNSUVhTUHSAe8BQVVfeXFMTTR6Tk1SNDlnbVdKd05ucjM1ckhnTFVCY0xyZ3UyX1ZxNWVTbTMzQnNLMTlycWswSHBYUGVTMXByRU9rRDFXcWpGejVGQV94dkcxME1jMExCVjFmSWFhSzVYXzZRbV9SRHZWbWZvbEdGaTdQUmhWeTRsU0Zzc0hFWHJBYnBNeF9IU2Znby04d2FyRzZRVzROSDdWM3dLbDVmZ2VCRHhlWk01TXEtN2NQdkh3alpBV1BWS3FDZUpPMjQ4aTFjZ2dleXQ1WFV1cHhMbFdCVEw1QkZFd2c0RVVXR092VGNKTklrZE95bG5tTjQ?oc=5" target="_blank" rel="noopener">The Economic Times (Fri, 22 May 2026) &nearr;</a></div></div>
+      <div class="overflow-x mt-12"><strong>Regulatory Insider Disclosures (Form C / SE):</strong><table><thead><tr><th>Date</th><th>Insider</th><th>Action</th><th class="num">Shares</th></tr></thead><tbody><tr>
+          <td>25-May-2022 </td>
+          <td><strong>Damodar Padhi</strong></td>
+          <td>Buy (Equity Shares)</td>
+          <td class="num">57</td>
+        </tr><tr>
+          <td>25-May-2022 </td>
+          <td><strong>Damodar Padhi</strong></td>
+          <td>Buy (Equity Shares)</td>
+          <td class="num">65</td>
+        </tr><tr>
+          <td>25-May-2022 </td>
+          <td><strong>Damodar Padhi</strong></td>
+          <td>Buy (Equity Shares)</td>
+          <td class="num">685</td>
+        </tr><tr>
+          <td>25-May-2022 </td>
+          <td><strong>Damodar Padhi</strong></td>
+          <td>Buy (Equity Shares)</td>
+          <td class="num">193</td>
+        </tr></tbody></table></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Ownership &amp; Block Activity Takeaway</span>
+        Tracked 5 material ownership/capital-action disclosure(s) near CMP (INR 2,452.8); note that sub-market Form C insider prices typically reflect ESOP exercises or allotment pricing rather than open-market trades.
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="margin:0 0 8px">External Consensus Distribution &amp; Credit / Brokerage Coverage</h3>
+      <div class="audit-kpis">
+        <div class="mini-stat"><div class="lbl">Third-Party Analysts</div><div class="v">41</div><div class="sub">Positive 25 · Neutral 12 · Cautious 4</div></div>
+        <div class="mini-stat"><div class="lbl">Consensus Mean Est.</div><div class="v">INR 2,385.3</div><div class="sub">-2.8% vs CMP</div></div>
+        <div class="mini-stat"><div class="lbl">Low / Median Est.</div><div class="v">1,920 / 2,375</div></div>
+        <div class="mini-stat"><div class="lbl">High Est.</div><div class="v">INR 3,266.0</div></div>
+      </div>
+      <div class="consensus-bar"><div class="cbar-buy" style="width:61.0%"></div><div class="cbar-hold" style="width:29.3%"></div><div class="cbar-sell" style="width:9.8%"></div></div><div class="sub" style="margin-bottom:8px">External Feed Split (Not Our Opinion): 61.0% Positive · 29.3% Neutral · 9.8% Cautious</div>
+      <div class="subcard ai-brief-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;"><span class="pill pill-blue">Disclosure Summary</span><span class="sub">5 disclosures synthesized</span></div><div class="brief-lead">Credit &amp; institutional coverage snapshot across 5 items (Brokerage Coverage, Flow / Street Note) — providing key governance, institutional engagement, and disclosure context for TATA CONSULTANCY SERV LT.</div><ul class="summary-bullets"><li><span class="pill pill-blue">Brokerage Coverage</span> <div><div class="brief-text">Public institutional and domestic brokerage reports currently center on earnings visibility and sector positioning; aggregate consensus is mapped above.</div><div class="brief-impact"><strong>Investor Effect:</strong> Highlights which catalysts institutional desks track most closely when modeling forward multiples.</div></div></li><li><span class="pill pill-blue">Flow / Street Note</span> <div><div class="brief-text">Wipro Vs TCS Vs HCLTech: Citi Is Raising Price Targets But Isn’t Changing Its Stance | Here’s Why.</div><div class="brief-impact"><strong>Investor Effect:</strong> Frames institutional consensus expectations and potential multiple re-rating triggers.</div></div></li></ul><div class="source-strip"><span class="source-hdr">Sources:</span> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi1AFBVV95cUxPbWcwTEdMekdZZGpIbWNHc1ZSMEJIR3l6eF8yNkpuR3pDWENRa2I4Vy10aEtxeFNoUU5TNl82ZG5kWjVacG5iM1cwZjR5QVpFdDhxcXExaFl0T0tDMkVQSVBZTWRRb095Y3J0QmdRR3hEVENwcmlRRDlGM2lNbmRJbW94Q3poU0M5UVlZUERpdmtoamhNRkJRWEJON1gwVVJjY0FwdzU0cDN3a2ZfQm9YdjNYU2ZJcjc5MVdnSVRQNl84amx6VmttNkhUVl81ZXJ1S3phRNIB3AFBVV95cUxOaTNsV21HVlVzWGEzN3owRnBUUFRKUDJrUU9tYlNjZkFySHZPUTAtYzVWd19zYXZ5bXVVV0VZU2k2R1pXNFRETlRjRWdLUDdpRng3b0ZCbE93b3I3R0ZiaXUxUGVFcFpYV0RGZzZ4dHh0QVg1a2Z3NTg4MFJqcUJwX1RwN3FLdGl2MjVSeHkyRHl1NGxvUHFTMVV4NWtfUVN2QUxmN1BjblJ2SkRYZ1BvOXBGeV8xT3V0NmZ2amxIbzlsUTBRSHpScVVORzJVaUx5VFI5ZGs0ZWowOUl4?oc=5" target="_blank" rel="noopener">NDTV Profit (Tue, 10 Nov 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxNQ1VRZlduSi1QcWx2UzZtck5WMGhtc3Y0bFBTbkM4WmtCSWREUWFQMmNuc1dwbXB6d3RHQTZpWVBkWV9jY1hQY2R1Y2hHR205ZUtRTzFtcjBJSHY1cHQtX3IyYTJMYlFWRlY2bUpMa0d1ck1OekY5djA4aHpEWUs1X1dBdndGSHJ5Q0FGOXBLYWxJbF9UdGlIenBfTXhtUDRVMGR4R2RB0gGrAUFVX3lxTFB1SFM1cUxkX2V2dGRKeGpxcGExTGYzOW9Nd2V6bGpObnQ2M3Bmdl9UeUVjeVdDeGpfMDR2RzlhaWg5d0lkMnJvelpTR3lCUlE3T0hJMkx0VzFZQVM3ODJHR0FrT2V4UFJvM25OUm1leUp0RHhZdmRRTWdJemNNMDBCdXRYSFZqT2lscG84S1RoclNzTmF4Wkp4ZW9OQkZ0VC1lUUJVaTE2NUhROA?oc=5" target="_blank" rel="noopener">Moneycontrol.com (Fri, 09 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMipAFBVV95cUxNQ3Z6RmVLVHBqckJIeDRJam5kcW5rSW05WVRXX1lNTXRSck1NRXRFclJYX3Rrb2ZPTE1qZ1ZHdXN6cEgwYnp5dWpoWUt6X1pVM1VvSG9yWUs4T2lLeS1BV24tUFhJSmJDS0Y4S2U4bWRkSUdZdnd0bm8xWkUtNG9IWEpjMkd1NnBGMGVFRzh4OEJYRzdQZl9Ea1BZLVJ2NXFmWTA4Yg?oc=5" target="_blank" rel="noopener">TradingView (Fri, 10 Jul 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxOcm1tTGI1TW1LOFlEMjVFRTdKZTFsUm5HclZrdHgtTzMzaWw0bWF1TWVyMkZ1YUEwTmZNcEZIT3VMWktzd04yNDlVX09lbmpBcmRURE45c0RZVlkxY1NsT0JIOV8yVGZiTTZQbUlLNml5UkRmQlhBQTIwWlFfTlhLYVdqTnRYNXZCVnI4T3FEV1U5NkVzZWwtYlF4MUx3cmdiMFFyZDFzSndmbUpEc0RYVXpIWUo5c1Ric1ZLOEpJLTU1dw?oc=5" target="_blank" rel="noopener">Investment Guru India (Fri, 09 Oct 2026) &nearr;</a> <a class="source-chip" href="https://news.google.com/rss/articles/CBMi5AFBVV95cUxPR09zRUFDb3lRUTZod2dHVGxNQ3p4dnpjMGs4REs4cnQ1QnNHUXp5aVd2eWNWY3ZvdDdkbWdGVGdWbFh6RG1EYzRhMml4MUc3OUNYRy1UcWJBYzMyckVqa203UnRHWjdlVjlNazJDenVkYWVaaXFUTl8wUjVDWnJ3cDVhOGlWSjJxVkpfNkFVOEl1d1d2cm1LV29YUG5nSXBUZTZGYnJCZm11T2xEOTZxUTJIOGQtbUFIbzNvV2V1dVNzYmZxWkxjX1g0cGxCb0xfYlAyVWtZSGJWYnd3bmp6eF83NWHSAeoBQVVfeXFMTzVlanlsSzdsYkhRNXY2LVRFUmZILVRsRXFwdlZwT2Y3aVVnNTZCZjAxbVNrMG1kM3hqZEhNVG9SbTJYbXRBX21uOGNNbmI4SDg2WmZZX3gtUGR0bGdBNnpGMm9ScUt6RXZzYURXcWpxMDVwMFlrdEJBeDd6TGx1a2xWRGFjbzJZM0U0a3BMRTdYVkJxaS04YU9CVVR2aFdfRGpxS1BBT1lNbGFETjhBQ1BkSEJ0WTdod3dLLTJKeENYbVVSb2NVb3FJSVkxMUduUVYxR3Q2azRiNkpTc1BQcG1VZVNWaTJwUWxB?oc=5" target="_blank" rel="noopener">Business Today (Thu, 11 Jun 2026) &nearr;</a></div></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">External Market Consensus Note</span>
+        External Public Consensus Summary (25 Positive, 12 Neutral, 4 Cautious): Third-party mean estimate of INR 2,385.3 reflects -2.8% variance vs CMP; cited for context only.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px">Relative Performance vs Nifty 50 &amp; Sector Peers</h3>
+      <div class="chart-box" style="height:190px"><canvas id="chartPerf"></canvas></div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Horizon</th><th class="num">TCS.NS</th><th class="num">Nifty 50</th><th class="num">Relative Alpha</th></tr></thead>
+          <tbody><tr>
+          <td><strong>1M</strong></td>
+          <td class="num text-green"><strong>14.4%</strong></td>
+          <td class="num">12.1%</td>
+          <td class="num text-green"><strong>2.3%</strong></td>
+        </tr><tr>
+          <td><strong>3M</strong></td>
+          <td class="num text-green"><strong>1.6%</strong></td>
+          <td class="num">2.7%</td>
+          <td class="num text-red"><strong>-1.1%</strong></td>
+        </tr><tr>
+          <td><strong>6M</strong></td>
+          <td class="num text-green"><strong>5.0%</strong></td>
+          <td class="num">6.0%</td>
+          <td class="num text-red"><strong>-1.0%</strong></td>
+        </tr><tr>
+          <td><strong>12M</strong></td>
+          <td class="num text-red"><strong>-16.0%</strong></td>
+          <td class="num">-1.7%</td>
+          <td class="num text-red"><strong>-14.3%</strong></td>
+        </tr></tbody>
+        </table>
+      </div>
+      <div class="overflow-x mt-12"><strong>12-Month Peer Return &amp; ROIC Leaderboard:</strong><table><thead><tr><th>Peer</th><th class="num">12M Return</th><th class="num">ROIC</th><th class="num">Score</th></tr></thead><tbody><tr class="">
+          <td><strong>KPITTECH.NS</strong></td>
+          <td class="num text-red"><strong>-54.1%</strong></td>
+          <td class="num">17.3%</td>
+          <td class="num">75.5</td>
+        </tr><tr class="highlight-row">
+          <td><strong>TCS.NS</strong></td>
+          <td class="num text-red"><strong>-16.0%</strong></td>
+          <td class="num">47.0%</td>
+          <td class="num">67.9</td>
+        </tr><tr class="">
+          <td><strong>PERSISTENT.NS</strong></td>
+          <td class="num text-red"><strong>-0.4%</strong></td>
+          <td class="num">24.5%</td>
+          <td class="num">59.1</td>
+        </tr><tr class="">
+          <td><strong>COFORGE.NS</strong></td>
+          <td class="num text-green"><strong>12.5%</strong></td>
+          <td class="num">18.2%</td>
+          <td class="num">53.7</td>
+        </tr></tbody></table></div>
+      <div class="decision-box decision-blue">
+        <span class="decision-tag">Relative &amp; Sector Performance Observation</span>
+        Relative Underperformance vs Nifty 50 (-14.3% Relative Over 12M, -16.0% Absolute): Price lags the broader index; quarterly margin trajectory and FPI flow direction remain key stabilization indicators.
+      </div>
+    </div>
+  </div>
+  
+  <div class="card" style="margin-bottom:0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <h3 style="margin:0">Competitive Positioning &amp; Structural Moat Analysis</h3>
+      <span class="pill pill-blue">TCS.NS ranks #2/4 in tracked peer group (67.9/100 score, 47.0% ROIC vs Nifty 50 backdrop)</span>
+    </div>
+    <div class="grid-2" style="margin-bottom:0;">
+      <div>
+        <div class="sub" style="margin-bottom:4px;"><strong>2&times;2 Competitive Positioning Matrix</strong> (X: ROIC % &middot; Y: 12M Return % &middot; Size: Market Cap)</div>
+        <div class="chart-box" style="height:225px;"><canvas id="chartCompMatrix"></canvas></div>
+        <h4 style="margin:12px 0 6px;font-size:0.86rem;">4-Pillar Structural Moat Scorecard</h4>
+        <div class="overflow-x">
+          <table>
+            <thead><tr><th>Moat Pillar</th><th>Rating</th><th>Assessment</th></tr></thead>
+            <tbody><tr><td><strong>Network Effects</strong></td><td><span class="pill pill-blue">Moderate</span></td><td>Two-sided partner, cloud &amp; delivery ecosystem scale supports enterprise win rates</td></tr><tr><td><strong>Switching Costs</strong></td><td><span class="pill pill-green">Strong</span></td><td>Multi-year enterprise workflows, compliance locks, and core software integration raise migration friction</td></tr><tr><td><strong>Scale Economies</strong></td><td><span class="pill pill-green">Strong</span></td><td>Capitalization tier (8,874.4B) supports fixed-cost amortization and procurement bargaining leverage</td></tr><tr><td><strong>Intangible Assets</strong></td><td><span class="pill pill-green">Strong</span></td><td>Brand equity, specialized domain IP, and operating know-how drive 47.0% post-tax ROIC (vs peer median 21.4%)</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="sub" style="margin-bottom:4px;"><strong>Comparative Peer Scorecard</strong> (&#9679;&#9679;&#9679; Top Tier &middot; &#9679;&#9679;&#9675; Mid &middot; &#9679;&#9675;&#9675; Lagging across cohort)</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr><th>Dimension</th><th class="num"><strong>TCS.NS</strong></th><th class="num">KPITTECH.NS</th><th class="num">PERSISTENT.NS</th><th class="num">COFORGE.NS</th></tr></thead>
+            <tbody><tr><td><strong>Scale (MCap)</strong></td><td class="num" style="font-weight:700;background:var(--accent-soft);">●●● 8,874.4B</td><td class="num" >●○○ 150.0B</td><td class="num" >●○○ 984.3B</td><td class="num" >●○○ 891.4B</td></tr><tr><td><strong>Capital Return (ROIC)</strong></td><td class="num" style="font-weight:700;background:var(--accent-soft);">●●● 47.0%</td><td class="num" >●○○ 17.3%</td><td class="num" >●○○ 24.5%</td><td class="num" >●○○ 18.2%</td></tr><tr><td><strong>Cash Conversion (CFO/EB)</strong></td><td class="num" style="font-weight:700;background:var(--accent-soft);">●○○ 0.68x</td><td class="num" >●●● 0.93x</td><td class="num" >●○○ 0.61x</td><td class="num" >●○○ 0.65x</td></tr><tr><td><strong>FCF Yield (%)</strong></td><td class="num" style="font-weight:700;background:var(--accent-soft);">●●● 5.4%</td><td class="num" >●●● 7.0%</td><td class="num" >●○○ 1.6%</td><td class="num" >●○○ 1.2%</td></tr><tr><td><strong>12M Momentum</strong></td><td class="num" style="font-weight:700;background:var(--accent-soft);">●●○ -16.0%</td><td class="num" >●○○ -54.1%</td><td class="num" >●●● -0.4%</td><td class="num" >●●● 12.5%</td></tr><tr><td><strong>Multiple (EV/NOPAT)</strong></td><td class="num" style="font-weight:700;background:var(--accent-soft);">●●● 17.0x</td><td class="num" >●●● 21.0x</td><td class="num" >●○○ 48.7x</td><td class="num" >●○○ 52.5x</td></tr><tr><td><strong>Composite Quality</strong></td><td class="num" style="font-weight:700;background:var(--accent-soft);">●●○ 67.9/100</td><td class="num" >●●● 75.5/100</td><td class="num" >●○○ 59.1/100</td><td class="num" >●○○ 53.7/100</td></tr></tbody>
+          </table>
+        </div>
+        <div class="grid-2-tight mt-12">
+          <div class="subcard"><strong class="text-green">Durable Advantages</strong><ul class="compact-list"><li>Capital efficiency exceeds peer median (47.0% ROIC vs 21.4% median).</li><li>Fortress balance sheet (0.07x Net Debt/EBITDA) provides cycle resilience.</li></ul></div>
+          <div class="subcard"><strong class="text-red">Structural Vulnerabilities</strong><ul class="compact-list"><li>Lower cash conversion (0.68x CFO/EBITDA) limits near-term free cash flexibility.</li><li>Stock trails Nifty 50 by -14.3% over trailing 12M; monitor margin inflection.</li></ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- SECTION 7: KEY ANALYTICAL DRIVERS & CONCLUSION -->
+  <div class="sec-wrap sec-jade">
+  <div id="conclusion" class="section-hdr"><span class="section-num">7</span> Key Analytical Drivers &amp; Conclusion</div>
+  <div class="grid-2">
+    
+        <div class="insight-card border-green">
+          <div class="insight-head">
+            <h4>1. Return on Invested Capital vs. Cost of Capital (ROIC)</h4>
+            <span class="pill pill-green">Strong Wealth Creator</span>
+          </div>
+          <div class="insight-reading">ROIC: 47.0% | ROIC–WACC Spread: +36.3% | Incremental ROIC: 40.5%</div>
+          <p class="explain-block"><strong>Analytical Definition:</strong> Measures post-tax operating return generated on total invested capital (equity plus debt), and whether incremental capital expenditure is value-accretive.</p>
+          <p class="explain-block"><strong>What It Means For TATA CONSULTANCY SERV LT:</strong> Every ₹100 of capital TATA CONSULTANCY SERV LT uses earns ₹47.0 a year, beating its cost of funds by +36.3%. New projects earn 40.5%, proving the business gets stronger as it grows.</p>
+        </div>
+        <div class="insight-card border-blue">
+          <div class="insight-head">
+            <h4>2. Operating Cash Flow Conversion vs. Reported Earnings</h4>
+            <span class="pill pill-blue">Moderate Cash Conversion</span>
+          </div>
+          <div class="insight-reading">CFO / EBITDA: 0.68x | Net Debt / EBITDA: 0.07x | Interest Coverage: 54.4x</div>
+          <p class="explain-block"><strong>Analytical Definition:</strong> Compares Operating Cash Flow (CFO) against EBITDA to verify that accounting profits are backed by real cash generation rather than accrual build-up.</p>
+          <p class="explain-block"><strong>What It Means For TATA CONSULTANCY SERV LT:</strong> Operating cash conversion is moderate at 0.68x EBITDA, indicating partial capital absorption in receivables or inventory.</p>
+        </div>
+        <div class="insight-card border-blue">
+          <div class="insight-head">
+            <h4>3. Reverse-DCF Implied Growth Expectations</h4>
+            <span class="pill pill-blue">Fairly Valued Growth</span>
+          </div>
+          <div class="insight-reading">Market-Implied FCF Growth: 7.3% vs. Historical Revenue CAGR: 5.8%</div>
+          <p class="explain-block"><strong>Analytical Definition:</strong> Solves backward from live enterprise value to isolate the 7-year Free Cash Flow CAGR embedded in the current share price.</p>
+          <p class="explain-block"><strong>What It Means For TATA CONSULTANCY SERV LT:</strong> At 17.0x EV/NOPAT (5.4% FCF yield), implied 7-year cash growth (7.3%) sits broadly in line with historical revenue growth (5.8%).</p>
+        </div>
+        <div class="insight-card border-green">
+          <div class="insight-head">
+            <h4>4. Balance Sheet Solvency, Governance &amp; Trading Liquidity</h4>
+            <span class="pill pill-green">Clean Audit</span>
+          </div>
+          <div class="insight-reading">Short-Term Debt Share: 16.2% | Institutional Ownership: 17.6%</div>
+          <p class="explain-block"><strong>Analytical Definition:</strong> Evaluates short-term debt rollover pressure, auditor qualification flags, and institutional secondary-market liquidity.</p>
+          <p class="explain-block"><strong>What It Means For TATA CONSULTANCY SERV LT:</strong> Interest coverage stands at 54.4x with short-term debt at 16.2% of borrowings, supported by $146.31M average daily turnover. Audit and governance screening shows zero critical red flags.</p>
+        </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 10px">Analytical Conclusion &amp; Educational Synthesis</h3>
+    <div class="grid-2-tight" style="margin-bottom:12px;">
+      <div class="subcard">
+        <strong>1. Operating &amp; Solvency Profile</strong>
+        <p class="explain-block">TATA CONSULTANCY SERV LT scores 67.9/100 on composite fundamental health (ROIC 47.0%, CFO/EBITDA 0.68x, Net Debt/EBITDA 0.07x).</p>
+      </div>
+      <div class="subcard">
+        <strong>2. Valuation Context vs Base DCF</strong>
+        <p class="explain-block">Shares trade at INR 2,452.8 versus a base-case 5Y DCF estimate of INR 2,571.9 (+4.9% variance).</p>
+      </div>
+      <div class="subcard">
+        <strong>3. Governance &amp; Credit Posture</strong>
+        <p class="explain-block">Governance &amp; solvency checks passed without audit red flags.</p>
+      </div>
+    </div>
+    <div class="decision-box decision-amber" style="margin-top:0;margin-bottom:12px;">
+      <span class="decision-tag">Concluding Educational Synthesis</span>
+      Resilient Core Business With Balanced Valuation Sensitivity: Clean balance-sheet solvency supports stability, while future multiple expansion or intrinsic value creation hinges on sequential revenue growth and margin consistency.
+    </div>
+    
+    <div class="subcard" style="margin-bottom:12px;border-left:4px solid var(--accent);">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;">
+        <div>
+          <span class="decision-tag" style="margin-bottom:3px;">Quantitative Fundamental &amp; Valuation Rating (Educational)</span>
+          <strong style="font-size:1.05rem;">Solid Core / Valuation &amp; Growth Sensitive</strong>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="badge badge-amber" style="font-size:0.9rem;">Grade B+ &bull; 3.5 / 5.0 &#9733;</span>
+          <span class="pill pill-slate">Composite Score: 67.9 / 100</span>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:10px;">
+        <div class="subcard" style="background:var(--surface);">
+          <strong>How Did We Rate This Company? (Balanced Institutional Profile)</strong>
+          <p class="explain-block">Rated under the &#x27;Balanced Institutional&#x27; quantitative weighting profile (20%/25%/20%/15%/10%/10% across Layers 1–6 = 100 base pts). Base weighted pillars contribute 67.9/100, plus a +0.0 pt multi-signal / veto adjustment = 67.9/100 final composite score. Hard risk overrides cap any stock with severe leverage, negative CFO, or qualified audit exceptions at Grade D. Note: This rating measures historical financial quality and intrinsic-value cushion strictly for education — it is NOT a SEBI-regulated Buy/Sell/Hold rating or price target.</p>
+        </div>
+        <div class="subcard" style="background:var(--surface);">
+          <strong>What This Rating Means</strong>
+          <p class="explain-block">TATA CONSULTANCY SERV LT scores 67.9/100 (Grade B+ — 3.5/5.0 Stars), reflecting a solvent operating franchise whose composite rating is tempered by either rich valuation multiples, moderate capital returns, or slower recent earnings momentum.</p>
+        </div>
+      </div>
+      <h4 style="margin:8px 0 4px;font-size:0.86rem;">Basis for Rating: 6-Pillar Scorecard Reconciliation (Base 67.9 + Multi-Signal/Veto +0.0 = 67.9/100)</h4>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Scoring Pillar &amp; Underlying Evidence</th><th class="num">Weight</th><th class="num">Earned Pts</th><th class="num">Attainment</th><th>Rating Tier</th></tr></thead>
+          <tbody><tr>
+              <td><strong>Balance Sheet &amp; Cash Conversion</strong><div class="muted" style="font-size:0.73rem;">Net Debt/EBITDA 0.07x · Int. Cov 54.4x · CFO/EBITDA 0.68x · FCF Yield 5.40%</div></td>
+              <td class="num">20.0%</td>
+              <td class="num"><strong>16.7</strong></td>
+              <td class="num">83.5%</td>
+              <td><span class="pill pill-green">Strong</span></td>
+            </tr><tr>
+              <td><strong>Business Quality &amp; Capital Efficiency</strong><div class="muted" style="font-size:0.73rem;">ROIC 47.0% · ROE 51.8% · Sales CAGR 5.8% · PAT CAGR 5.3%</div></td>
+              <td class="num">25.0%</td>
+              <td class="num"><strong>15.2</strong></td>
+              <td class="num">60.8%</td>
+              <td><span class="pill pill-blue">Satisfactory</span></td>
+            </tr><tr>
+              <td><strong>Valuation &amp; Margin of Safety</strong><div class="muted" style="font-size:0.73rem;">P/E 17.2x · P/B 7.46x · EV/NOPAT 17.0x · Base DCF +4.9%</div></td>
+              <td class="num">20.0%</td>
+              <td class="num"><strong>10.4</strong></td>
+              <td class="num">52.0%</td>
+              <td><span class="pill pill-slate">Watch</span></td>
+            </tr><tr>
+              <td><strong>Governance, Audit &amp; Litigation</strong><div class="muted" style="font-size:0.73rem;">Clean audit checks — zero governance or fraud flags</div></td>
+              <td class="num">15.0%</td>
+              <td class="num"><strong>10.5</strong></td>
+              <td class="num">70.0%</td>
+              <td><span class="pill pill-blue">Satisfactory</span></td>
+            </tr><tr>
+              <td><strong>Macro, Geopolitical &amp; External Risk</strong><div class="muted" style="font-size:0.73rem;">Supply-chain, tariff, commodity, and macro sensitivity resilience</div></td>
+              <td class="num">10.0%</td>
+              <td class="num"><strong>5.1</strong></td>
+              <td class="num">51.0%</td>
+              <td><span class="pill pill-slate">Watch</span></td>
+            </tr><tr>
+              <td><strong>Market Scale &amp; Trading Liquidity</strong><div class="muted" style="font-size:0.73rem;">Market Cap INR 8,874.4B · ADTV $146.3M · Inst. Float 17.6%</div></td>
+              <td class="num">10.0%</td>
+              <td class="num"><strong>10.0</strong></td>
+              <td class="num">100.0%</td>
+              <td><span class="pill pill-green">Strong</span></td>
+            </tr></tbody>
+        </table>
+      </div>
+      <h4 style="margin:12px 0 4px;font-size:0.86rem;">Our Educational Guide on the 5-Tier Rating Scale</h4>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Grade</th><th>Stars</th><th class="num">Score Range</th><th>Classification</th><th>Meaning &amp; Analytical Study Focus</th></tr></thead>
+          <tbody><tr class="">
+              <td><strong>Grade A+</strong></td>
+              <td>5.0 ★</td>
+              <td class="num">78.0 – 100.0</td>
+              <td><strong>Top-Decile Quality</strong></td>
+              <td>Exceptional ROIC &gt; WACC spread, fortress net-cash or low-leverage balance sheet, clean audit, and favorable valuation cushion. <span class="muted">Focus: Examine sustainability of incremental ROIC, reinvestment runway, and any cyclical peak margin risk.</span></td>
+            </tr><tr class="">
+              <td><strong>Grade A</strong></td>
+              <td>4.0 ★</td>
+              <td class="num">68.0 – 77.9</td>
+              <td><strong>Strong Fundamental Core</strong></td>
+              <td>High-quality operating franchise with durable margins and clean governance, typically deducting points only on rich multiples or mature growth. <span class="muted">Focus: Compare CMP against Base/Bear DCF and 5Y P/E bands to separate business quality from entry multiple risk.</span></td>
+            </tr><tr class="highlight-row">
+              <td><strong>Grade B+</strong></td>
+              <td>3.5 ★</td>
+              <td class="num">58.0 – 67.9</td>
+              <td><strong>Solid / Valuation Sensitive</strong></td>
+              <td>Sound core business with acceptable solvency, but either lower return ratios, tighter valuation margin of safety, or slower 3Y earnings CAGR. <span class="muted">Focus: Track sequential margin expansion, order book conversion, and working-capital intensity.</span></td>
+            </tr><tr class="">
+              <td><strong>Grade B</strong></td>
+              <td>3.0 ★</td>
+              <td class="num">45.0 – 57.9</td>
+              <td><strong>Moderate / Mixed Profile</strong></td>
+              <td>Mixed financial scorecard where steady revenue scale is offset by margin volatility, moderate leverage, or sub-par cash conversion. <span class="muted">Focus: Verify capex payoff timeline, debt reduction milestones, and peer ROIC gap before relying on mean reversion.</span></td>
+            </tr><tr class="">
+              <td><strong>Grade C / D</strong></td>
+              <td>1.0 – 2.0 ★</td>
+              <td class="num">&lt; 45.0 or Veto</td>
+              <td><strong>Weak Quality / Risk Veto</strong></td>
+              <td>Grade C reflects weak operational returns; Grade D indicates an active hard risk veto (excessive debt, cash-flow divergence, or audit qualification). <span class="muted">Focus: Focus strictly on auditor qualifications, debt maturity schedule, promoter pledges, and structural turnaround evidence.</span></td>
+            </tr></tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="subcard" style="margin-bottom:12px;">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+        <strong style="font-size:0.95rem;">Sources of Data &amp; Strict Actual-Data Verification</strong>
+        <span class="pill pill-green">Actual Data Only &bull; 4/5 Feeds Verified</span>
+      </div>
+      <div class="explain-block" style="margin-bottom:8px;">Strict Actual-Data Policy Enforced: Every financial metric, multiple, segment figure, and disclosure link in this report is sourced exclusively from live exchange/regulatory APIs, public filings, or cached KDB-X snapshots of actual fetched statements. Zero synthetic, dummy, placeholder, or backward-imputed EPS figures are generated; unavailable fields display as &#x27;—&#x27; or omit modeling.</div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr><th>Data Stream</th><th>Provider / Regulatory Source</th><th>Status</th><th>Coverage &amp; Provenance</th></tr></thead>
+          <tbody><tr>
+              <td><strong>Market Quotes, Financial Statements &amp; Price History</strong> &nbsp;<a href="https://finance.yahoo.com/quote/TCS.NS" target="_blank" rel="noopener noreferrer" style="font-size:0.74rem;">Source &#8599;</a></td>
+              <td>Yahoo Finance API + KDB-X / PyKX Binary Store (.kdb)</td>
+              <td><span class="pill pill-green">Verified</span></td>
+              <td class="muted">4 annual FYs (FY2023, FY2024, FY2025, FY2026), 4 quarters, 5Y price series</td>
+            </tr><tr>
+              <td><strong>NSE India Integrated Filings (Ind-AS 108 XBRL) &amp; Announcements</strong> &nbsp;<a href="https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1734607_08102026100810_WEB.xml" target="_blank" rel="noopener noreferrer" style="font-size:0.74rem;">Source &#8599;</a></td>
+              <td>National Stock Exchange of India (nseindia.com)</td>
+              <td><span class="pill pill-green">Verified</span></td>
+              <td class="muted">Statutory XBRL segments (2026-09-30)</td>
+            </tr><tr>
+              <td><strong>Consolidated Ratios, Working Capital &amp; Shareholding</strong> &nbsp;<a href="https://www.screener.in/company/TCS/consolidated/" target="_blank" rel="noopener noreferrer" style="font-size:0.74rem;">Source &#8599;</a></td>
+              <td>Screener.in Public Company Filings</td>
+              <td><span class="pill pill-green">Verified</span></td>
+              <td class="muted">Shareholding (Sep 2026), ROCE, Debtor/Inventory/Payable days</td>
+            </tr><tr>
+              <td><strong>Corporate Developments, Credit Ratings &amp; Order-Book Disclosures</strong></td>
+              <td>Google News RSS + Exchange Media Feeds</td>
+              <td><span class="pill pill-green">Verified</span></td>
+              <td class="muted">6 dated disclosure / news items indexed with source attribution</td>
+            </tr><tr>
+              <td><strong>Annual Report / Independent Auditor&#x27;s Report PDF</strong></td>
+              <td>User-Supplied Primary Filing (PyMuPDF Forensic Parser)</td>
+              <td><span class="pill pill-slate">Not Attached</span></td>
+              <td class="muted">No PDF attached on this run; automated solvency &amp; exchange checks applied.</td>
+            </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="muted mt-12" style="border-top:1px solid var(--border);padding-top:10px;">
+      <strong>SEBI Regulatory &amp; Educational Notice:</strong> Prepared strictly for educational, informational, and quantitative financial analysis using verified public exchange filings and market data in accordance with <strong>SEBI (Research Analysts) Regulations, 2014</strong> and <strong>SEBI (Investment Advisers) Regulations, 2013</strong> framing. Neither this automated agent nor its output constitutes registered investment advice, portfolio management, or a recommendation to buy, sell, or hold any security.
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+const D = {"annual_labels": ["FY2023", "FY2024", "FY2025", "FY2026"], "annual_rev": [225458.0, 240893.0, 255324.0, 267021.0], "annual_pat": [42147.0, 45908.0, 48553.0, 49210.0], "annual_fcf": [38865.0, 41664.0, 44971.0, 47948.0], "annual_opm": [27.81, 28.13, 27.95, 27.07], "q_labels": ["2025-12-31", "2026-03-31", "2026-06-30", "2026-09-30"], "q_rev": [67087.0, 70698.0, 72275.0, 73188.0], "q_pat": [10657.0, 13718.0, 13349.0, 13884.0], "q_opm": [21.79, 26.35, 25.21, 25.81], "surp_labels": ["2025-12-31", "2026-03-31", "2026-06-30", "2026-09-30"], "surp_actual": [36.59, 37.92, 38.28, 38.37], "surp_est": [36.19, 38.11, 37.33, 38.07], "surp_pct": [1.1, -0.5, 2.5, 0.8], "ret_attr_labels": ["Entry Capital", "EBITDA Growth", "Multiple Shift", "Cash & Divs", "Base Exit MOIC"], "ret_attr_vals": [1.0, 0.34, 0.08, 0.27, 1.69], "seg_labels": ["Banking, Financial Services ", "Consumer Business", "Communication, Media and Tec", "Life Sciences and Healthcare", "Manufacturing", "Others"], "seg_rev_mix": [39.5, 15.2, 14.8, 10.4, 10.0, 10.1], "seg_ebit_mix": [39.1, 17.6, 15.5, 10.2, 10.9, 6.8], "seg_margins": [25.5, 29.8, 26.8, 25.3, 27.8, 17.3], "dcf_labels": ["Year 1", "Year 2", "Year 3", "Year 4", "Year 5"], "dcf_fcff": [42643.7, 45498.7, 48496.5, 51640.5, 54933.8], "dcf_pv": [38752.9, 37574.9, 36396.4, 35219.9, 34047.6], "dcf_sim": {"base_rev": 267021.0, "reinv_pct": 20.0, "tax_pct": 24.48, "term_g_pct": 5.0, "net_debt": -39216.0, "shares_scaled": 361.809, "cmp": 2452.8, "curr": "INR"}, "peer_labels": ["KPITTECH.NS", "TCS.NS", "PERSISTENT.NS", "COFORGE.NS"], "peer_roic": [17.3, 47.0, 24.5, 18.2], "peer_score": [75.5, 67.9, 59.1, 53.7], "comp_points": [{"symbol": "TCS.NS", "is_target": true, "x_roic": 47.0, "y_ret12": -16.0, "score": 67.9, "mcap_b": 8874.4, "r": 18.0}, {"symbol": "KPITTECH.NS", "is_target": false, "x_roic": 17.3, "y_ret12": -54.1, "score": 75.5, "mcap_b": 150.0, "r": 8.4}, {"symbol": "PERSISTENT.NS", "is_target": false, "x_roic": 24.5, "y_ret12": -0.4, "score": 59.1, "mcap_b": 984.3, "r": 10.7}, {"symbol": "COFORGE.NS", "is_target": false, "x_roic": 18.2, "y_ret12": 12.5, "score": 53.7, "mcap_b": 891.4, "r": 10.5}], "sh_labels": ["Sep 2025", "Dec 2025", "Mar 2026", "Jun 2026", "Sep 2026"], "sh_prom": [71.77, 71.77, 71.77, 71.77, 71.77], "sh_fii": [10.33, 10.37, 9.66, 9.07, 9.01], "sh_dii": [12.64, 12.81, 13.34, 13.41, 13.57], "perf_labels": ["1M", "3M", "6M", "12M"], "perf_stock": [14.4, 1.6, 5.0, -16.0], "perf_bench": [12.1, 2.7, 6.0, -1.7], "price_dates": ["68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "100", "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "136", "137", "138", "139", "140", "141", "142", "143", "144", "145", "146", "147", "148", "149", "150", "151", "152", "153", "154", "155", "156", "157", "158", "159", "160", "161", "162", "163", "164", "165", "166", "167", "168", "169", "170", "171", "172", "173", "174", "175", "176", "177", "178", "179", "180", "181", "182", "183", "184", "185", "186", "187", "188", "189", "190", "191", "192", "193", "194", "195", "196", "197", "198", "199", "200", "201", "202", "203", "204", "205", "206", "207", "208", "209", "210", "211", "212", "213", "214", "215", "216", "217", "218", "219", "220", "221", "222", "223", "224", "225", "226", "227", "228", "229", "230", "231", "232", "233", "234", "235", "236", "237", "238", "239", "240", "241", "242", "243", "244", "245", "246", "247"], "price_closes": [2652.3, 2630.4, 2613.8, 2621.9, 2612.2, 2512.1, 2566.3, 2584.3, 2574.2, 2550.9, 2525.8, 2517.0, 2496.4, 2466.9, 2452.9, 2405.9, 2383.9, 2352.8, 2351.5, 2334.4, 2382.4, 2299.6, 2333.4, 2326.7, 2341.4, 2320.5, 2332.6, 2302.4, 2350.5, 2392.0, 2414.7, 2479.0, 2497.9, 2527.0, 2463.9, 2413.4, 2493.7, 2515.2, 2519.7, 2517.8, 2548.0, 2477.7, 2461.4, 2339.5, 2389.0, 2386.2, 2415.4, 2414.7, 2373.1, 2369.2, 2377.1, 2343.9, 2337.1, 2335.6, 2245.2, 2218.4, 2192.2, 2209.8, 2228.5, 2271.4, 2271.7, 2271.5, 2261.8, 2283.5, 2251.8, 2259.7, 2234.7, 2272.8, 2420.7, 2217.7, 2217.0, 2175.3, 2128.4, 2128.0, 2130.8, 2112.7, 2138.2, 2138.8, 2175.4, 2199.2, 2179.7, 2102.2, 2105.0, 2037.5, 2086.4, 2072.3, 2075.4, 2009.7, 1961.4, 2045.9, 2071.1, 2035.6, 2073.6, 2035.5, 2027.5, 2046.8, 2158.1, 2177.0, 2177.6, 2189.4, 2257.0, 2239.2, 2209.4, 2196.6, 2231.0, 2242.4, 2283.5, 2385.3, 2433.7, 2418.9, 2353.1, 2460.6, 2447.0, 2400.2, 2360.5, 2439.7, 2412.9, 2432.8, 2337.3, 2362.4, 2348.5, 2301.0, 2267.9, 2276.9, 2285.8, 2289.8, 2272.0, 2284.1, 2258.0, 2236.5, 2329.6, 2386.6, 2356.5, 2335.6, 2307.8, 2291.8, 2258.0, 2243.6, 2196.3, 2192.4, 2189.2, 2239.1, 2177.2, 2178.4, 2093.9, 2117.4, 2093.9, 2078.6, 2076.0, 2071.0, 2059.8, 2021.7, 2039.8, 2064.0, 2103.2, 2088.9, 2069.3, 2065.0, 2144.6, 2113.8, 2257.3, 2304.9, 2350.0, 2465.0, 2460.9, 2529.0, 2506.9, 2530.0, 2535.0, 2496.9, 2460.0, 2478.0, 2502.6, 2501.7, 2499.1, 2436.0, 2495.7, 2498.5, 2475.4, 2452.6], "price_dma50": [3039.4, 3030.0, 3020.8, 3012.1, 3003.1, 2991.6, 2981.0, 2971.2, 2961.0, 2949.1, 2936.7, 2923.3, 2909.8, 2895.5, 2881.7, 2867.4, 2852.9, 2838.5, 2823.6, 2808.0, 2794.0, 2777.5, 2761.0, 2746.1, 2731.5, 2715.7, 2699.7, 2684.6, 2670.4, 2655.6, 2642.2, 2631.2, 2620.2, 2609.2, 2596.8, 2583.4, 2570.8, 2559.7, 2549.1, 2537.6, 2525.6, 2516.6, 2507.4, 2496.8, 2487.0, 2476.5, 2468.0, 2462.6, 2457.5, 2452.1, 2446.6, 2440.8, 2435.3, 2429.6, 2422.2, 2416.4, 2408.9, 2401.4, 2394.5, 2388.9, 2383.8, 2378.9, 2374.2, 2370.5, 2366.5, 2363.6, 2360.6, 2359.0, 2360.4, 2358.1, 2354.7, 2352.3, 2348.2, 2344.2, 2340.0, 2335.8, 2331.9, 2328.7, 2325.2, 2321.3, 2316.6, 2309.1, 2301.2, 2291.4, 2283.9, 2277.1, 2268.7, 2258.6, 2247.4, 2238.0, 2228.4, 2219.6, 2211.8, 2205.8, 2198.5, 2191.7, 2186.6, 2181.8, 2177.9, 2174.3, 2171.9, 2169.8, 2167.3, 2164.5, 2164.2, 2164.7, 2166.5, 2170.0, 2174.1, 2177.1, 2178.7, 2182.5, 2186.2, 2188.5, 2190.7, 2194.3, 2197.9, 2201.1, 2199.4, 2202.3, 2204.9, 2207.4, 2210.2, 2213.2, 2216.3, 2219.9, 2222.5, 2225.4, 2227.1, 2227.8, 2230.8, 2236.5, 2241.6, 2247.5, 2251.9, 2256.3, 2260.0, 2264.7, 2269.4, 2272.3, 2274.7, 2278.7, 2280.8, 2283.7, 2285.0, 2286.4, 2285.1, 2283.1, 2281.1, 2278.7, 2274.8, 2270.4, 2267.1, 2264.4, 2261.8, 2258.8, 2254.5, 2248.1, 2242.3, 2236.2, 2234.3, 2231.2, 2229.2, 2230.5, 2232.5, 2234.3, 2236.2, 2238.1, 2242.1, 2244.8, 2247.0, 2250.6, 2255.3, 2259.7, 2264.0, 2266.9, 2271.4, 2275.7, 2280.0, 2284.4], "price_dma200": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 2561.3, 2558.4, 2555.1, 2551.7, 2548.3, 2544.7, 2541.2, 2537.1, 2532.9, 2528.8, 2524.9, 2520.9, 2516.6, 2512.0, 2507.6, 2503.0, 2498.4, 2493.5, 2488.4, 2483.2, 2477.8, 2472.6, 2467.6, 2462.9, 2457.9, 2452.7, 2447.7, 2443.0, 2437.8, 2433.4, 2429.0, 2424.9, 2421.3, 2417.9, 2414.9, 2411.9, 2409.2, 2406.4, 2403.3, 2400.2, 2397.0, 2393.7, 2390.8, 2387.9, 2384.6, 2381.4, 2378.6, 2375.7, 2372.3], "pe_dates": ["2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11"], "pe_series": [25.9, 25.5, 24.7, 24.8, 25.3, 25.6, 26.6, 26.1, 27.5, 26.3, 27.2, 29.6, 27.5, 29.5, 28.0, 27.6, 26.7, 28.4, 31.9, 33.2, 31.1, 29.0, 31.2, 29.9, 28.9, 24.5, 25.4, 24.3, 24.3, 24.6, 21.6, 22.0, 20.6, 21.8, 22.4, 22.9, 22.4, 18.9, 16.9, 17.8, 16.4, 14.8, 17.3, 17.5, 15.0, 18.4, 18.2], "pe_mean": 24.4, "pe_plus": 29.1, "pe_minus": 19.7, "bench_label": "Nifty 50", "sym": "TCS.NS", "unit": "\u20b9 Cr"};
+const gridColor = 'rgba(148, 163, 184, 0.16)';
+const tickColor = '#64748b';
+
+function toggleTheme() {
+  const root = document.documentElement;
+  root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+
+if (document.getElementById('chartPrice') && D.price_dates && D.price_dates.length) {
+  new Chart(document.getElementById('chartPrice'), {
+    type: 'line',
+    data: {
+      labels: D.price_dates,
+      datasets: [
+        { label: 'Close Price', data: D.price_closes, borderColor: '#0284c7', backgroundColor: 'rgba(2,132,199,0.08)', fill: true, pointRadius: 0, tension: 0.15, borderWidth: 2.2 },
+        { label: '50-DMA', data: D.price_dma50, borderColor: '#059669', pointRadius: 0, borderDash: [4,4], tension: 0.15, borderWidth: 1.7 },
+        { label: '200-DMA', data: D.price_dma200, borderColor: '#d97706', pointRadius: 0, borderDash: [6,4], tension: 0.15, borderWidth: 1.7 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor, maxTicksLimit: 6 }, grid: { display: false } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: tickColor } } } }
+  });
+}
+
+if (document.getElementById('chartPE') && D.pe_dates && D.pe_dates.length) {
+  const peMeanArr = D.pe_dates.map(() => D.pe_mean);
+  const pePlusArr = D.pe_dates.map(() => D.pe_plus);
+  const peMinusArr = D.pe_dates.map(() => D.pe_minus);
+  new Chart(document.getElementById('chartPE'), {
+    type: 'line',
+    data: {
+      labels: D.pe_dates,
+      datasets: [
+        { label: 'Trailing P/E (x)', data: D.pe_series, borderColor: '#0284c7', backgroundColor: 'rgba(2,132,199,0.08)', fill: false, pointRadius: 0, tension: 0.2, borderWidth: 2.2 },
+        { label: '5Y Avg (' + D.pe_mean + 'x)', data: peMeanArr, borderColor: '#64748b', pointRadius: 0, borderDash: [4,4], borderWidth: 1.6 },
+        { label: '+1 SD (' + D.pe_plus + 'x)', data: pePlusArr, borderColor: '#dc2626', pointRadius: 0, borderDash: [6,4], borderWidth: 1.4 },
+        { label: '-1 SD (' + D.pe_minus + 'x)', data: peMinusArr, borderColor: '#059669', pointRadius: 0, borderDash: [6,4], borderWidth: 1.4 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor, maxTicksLimit: 6 }, grid: { display: false } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: tickColor } } } }
+  });
+}
+
+if (document.getElementById('chartReturnsAttr') && D.ret_attr_labels && D.ret_attr_labels.length) {
+  const retColors = D.ret_attr_vals.map((v, idx) => {
+    if (idx === 0) return 'rgba(100,116,139,0.75)';
+    if (idx === D.ret_attr_vals.length - 1) return 'rgba(5,150,105,0.85)';
+    return v >= 0 ? 'rgba(2,132,199,0.78)' : 'rgba(220,38,38,0.78)';
+  });
+  new Chart(document.getElementById('chartReturnsAttr'), {
+    type: 'bar',
+    data: {
+      labels: D.ret_attr_labels,
+      datasets: [{ label: 'MOIC Attribution (x)', data: D.ret_attr_vals, backgroundColor: retColors, borderRadius: 6 }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { x: { ticks: { color: tickColor }, grid: { display: false } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ctx.parsed.y.toFixed(2) + 'x MOIC' } } }
+    }
+  });
+}
+
+if (document.getElementById('chartSurprise') && D.surp_labels && D.surp_labels.length) {
+  new Chart(document.getElementById('chartSurprise'), {
+    type: 'bar',
+    data: {
+      labels: D.surp_labels,
+      datasets: [
+        { label: 'Actual EPS', data: D.surp_actual, backgroundColor: 'rgba(109,40,217,0.82)', borderRadius: 5, yAxisID: 'y' },
+        { label: 'Street Estimate', data: D.surp_est, backgroundColor: 'rgba(148,163,184,0.52)', borderRadius: 5, yAxisID: 'y' },
+        { label: 'Surprise %', data: D.surp_pct, type: 'line', borderColor: '#059669', backgroundColor: '#059669', tension: 0.25, borderWidth: 2.2, yAxisID: 'y1' }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } }, y1: { position: 'right', ticks: { color: '#059669' }, grid: { drawOnChartArea: false } } }, plugins: { legend: { labels: { color: tickColor } } } }
+  });
+}
+
+new Chart(document.getElementById('chartAnnual'), {
+  type: 'bar',
+  data: {
+    labels: D.annual_labels,
+    datasets: [
+      { label: 'Revenue', data: D.annual_rev, backgroundColor: 'rgba(2,132,199,0.72)', borderRadius: 5, yAxisID: 'y' },
+      { label: 'Net Profit', data: D.annual_pat, backgroundColor: 'rgba(5,150,105,0.78)', borderRadius: 5, yAxisID: 'y' },
+      { label: 'Free Cash', data: D.annual_fcf, backgroundColor: 'rgba(217,119,6,0.78)', borderRadius: 5, yAxisID: 'y' },
+      { label: 'OPM %', data: D.annual_opm, type: 'line', borderColor: '#9333ea', backgroundColor: '#9333ea', tension: 0.3, borderWidth: 2.2, yAxisID: 'y1' }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } }, y1: { position: 'right', ticks: { color: '#9333ea' }, grid: { drawOnChartArea: false } } }, plugins: { legend: { labels: { color: tickColor } } } }
+});
+
+new Chart(document.getElementById('chartQuarterly'), {
+  type: 'bar',
+  data: {
+    labels: D.q_labels,
+    datasets: [
+      { label: 'Revenue', data: D.q_rev, backgroundColor: 'rgba(2,132,199,0.72)', borderRadius: 5, yAxisID: 'y' },
+      { label: 'Net Profit', data: D.q_pat, backgroundColor: 'rgba(5,150,105,0.78)', borderRadius: 5, yAxisID: 'y' },
+      { label: 'EBIT Margin %', data: D.q_opm, type: 'line', borderColor: '#d97706', backgroundColor: '#d97706', tension: 0.3, borderWidth: 2.2, yAxisID: 'y1' }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } }, y1: { position: 'right', ticks: { color: '#d97706' }, grid: { drawOnChartArea: false } } }, plugins: { legend: { labels: { color: tickColor } } } }
+});
+
+if (document.getElementById('chartSegments') && D.seg_labels && D.seg_labels.length) {
+  new Chart(document.getElementById('chartSegments'), {
+    type: 'bar',
+    data: {
+      labels: D.seg_labels,
+      datasets: [
+        { label: 'Revenue Mix (%)', data: D.seg_rev_mix, backgroundColor: 'rgba(3,105,161,0.76)', borderRadius: 5 },
+        { label: 'EBIT Mix (%)', data: D.seg_ebit_mix, backgroundColor: 'rgba(5,150,105,0.80)', borderRadius: 5 },
+        { label: 'EBIT Margin (%)', data: D.seg_margins, backgroundColor: 'rgba(217,119,6,0.76)', borderRadius: 5 }
+      ]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { display: false } } }, plugins: { legend: { labels: { color: tickColor } } } }
+  });
+}
+
+const dcfChart = new Chart(document.getElementById('chartDCF'), {
+  type: 'bar',
+  data: {
+    labels: D.dcf_labels,
+    datasets: [
+      { label: 'Projected Free Cash (' + D.unit + ')', data: D.dcf_fcff, backgroundColor: 'rgba(2,132,199,0.72)', borderRadius: 5 },
+      { label: 'Present Value Today', data: D.dcf_pv, backgroundColor: 'rgba(5,150,105,0.82)', borderRadius: 5 }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: tickColor } } } }
+});
+
+const baseSlG = document.getElementById('slG').value;
+const baseSlM = document.getElementById('slM').value;
+const baseSlW = document.getElementById('slW').value;
+function resetSim() {
+  document.getElementById('slG').value = baseSlG;
+  document.getElementById('slM').value = baseSlM;
+  document.getElementById('slW').value = baseSlW;
+  runDcfSim();
+}
+function runDcfSim() {
+  const g0 = parseFloat(document.getElementById('slG').value) / 100.0;
+  const m = parseFloat(document.getElementById('slM').value) / 100.0;
+  const w = parseFloat(document.getElementById('slW').value) / 100.0;
+  document.getElementById('lblG').textContent = (g0 * 100).toFixed(1) + '%';
+  document.getElementById('lblM').textContent = (m * 100).toFixed(1) + '%';
+  document.getElementById('lblW').textContent = (w * 100).toFixed(2) + '%';
+  const s = D.dcf_sim;
+  const tg = s.term_g_pct / 100.0;
+  const tax = s.tax_pct / 100.0;
+  const reinv0 = s.reinv_pct / 100.0;
+  let rev = s.base_rev, pvSum = 0, lastFcff = 0;
+  const newFcff = [], newPv = [];
+  for (let yr = 1; yr <= 5; yr++) {
+    const sg = g0 - (g0 - tg) * ((yr - 1) / 5.0) * 0.6;
+    rev *= (1.0 + sg);
+    const nopat = rev * m * (1.0 - tax);
+    const fcff = nopat * (1.0 - reinv0 * (1.0 - 0.15 * ((yr - 1) / 4.0)));
+    const pv = fcff / Math.pow(1.0 + w, yr);
+    pvSum += pv;
+    lastFcff = fcff;
+    newFcff.push(Math.round(fcff * 10) / 10);
+    newPv.push(Math.round(pv * 10) / 10);
+  }
+  const tv = (lastFcff * (1.0 + tg)) / Math.max(w - tg, 0.025);
+  const eq = pvSum + tv / Math.pow(1.0 + w, 5) - s.net_debt;
+  const px = s.shares_scaled > 0 ? eq / s.shares_scaled : 0;
+  const up = s.cmp > 0 ? (px / s.cmp - 1.0) * 100.0 : 0;
+  document.getElementById('simFairPrice').textContent = s.curr + ' ' + px.toLocaleString(undefined, {maximumFractionDigits:1, minimumFractionDigits:1});
+  const upEl = document.getElementById('simUpside');
+  upEl.textContent = (up >= 0 ? '+' : '') + up.toFixed(1) + '%';
+  upEl.style.color = up >= 10 ? 'var(--green)' : (up < -5 ? 'var(--red)' : 'var(--amber)');
+  dcfChart.data.datasets[0].data = newFcff;
+  dcfChart.data.datasets[1].data = newPv;
+  dcfChart.update('none');
+}
+
+new Chart(document.getElementById('chartPeers'), {
+  type: 'bar',
+  data: {
+    labels: D.peer_labels,
+    datasets: [
+      { label: 'Quality Score (/100)', data: D.peer_score, backgroundColor: 'rgba(2,132,199,0.75)', borderRadius: 5 },
+      { label: 'ROIC (%)', data: D.peer_roic, backgroundColor: 'rgba(5,150,105,0.78)', borderRadius: 5 }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: tickColor } } } }
+});
+
+if (document.getElementById('chartShareholding') && D.sh_labels && D.sh_labels.length) {
+  new Chart(document.getElementById('chartShareholding'), {
+    type: 'line',
+    data: {
+      labels: D.sh_labels,
+      datasets: [
+        { label: 'Promoters %', data: D.sh_prom, borderColor: '#0284c7', backgroundColor: '#0284c7', tension: 0.25, borderWidth: 2.2 },
+        { label: 'Foreign Inv. (FPIs) %', data: D.sh_fii, borderColor: '#059669', backgroundColor: '#059669', tension: 0.25, borderWidth: 2.2 },
+        { label: 'Domestic Funds (DIIs) %', data: D.sh_dii, borderColor: '#d97706', backgroundColor: '#d97706', tension: 0.25, borderWidth: 2.2 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: tickColor } } } }
+  });
+}
+
+if (document.getElementById('chartPerf') && D.perf_labels && D.perf_labels.length) {
+  new Chart(document.getElementById('chartPerf'), {
+    type: 'bar',
+    data: {
+      labels: D.perf_labels,
+      datasets: [
+        { label: D.sym + ' (%)', data: D.perf_stock, backgroundColor: 'rgba(2,132,199,0.78)', borderRadius: 5 },
+        { label: D.bench_label + ' (%)', data: D.perf_bench, backgroundColor: 'rgba(100,116,139,0.55)', borderRadius: 5 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: tickColor } } } }
+  });
+}
+
+if (document.getElementById('chartCompMatrix') && D.comp_points && D.comp_points.length) {
+  const dsComp = D.comp_points.map((pt) => ({
+    label: pt.symbol,
+    data: [{ x: pt.x_roic, y: pt.y_ret12, r: pt.r }],
+    backgroundColor: pt.is_target ? 'rgba(5,150,105,0.72)' : 'rgba(2,132,199,0.52)',
+    borderColor: pt.is_target ? '#059669' : '#0284c7',
+    borderWidth: pt.is_target ? 2.5 : 1.5
+  }));
+  new Chart(document.getElementById('chartCompMatrix'), {
+    type: 'bubble',
+    data: { datasets: dsComp },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { title: { display: true, text: 'Capital Efficiency — ROIC (%)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } },
+        y: { title: { display: true, text: '12M Total Return (%)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } }
+      },
+      plugins: {
+        legend: { labels: { color: tickColor } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const p = D.comp_points[ctx.datasetIndex];
+              return p.symbol + ': ROIC ' + p.x_roic + '% | 12M ' + p.y_ret12 + '% | Score ' + p.score + '/100 | MCap $' + p.mcap_b + 'B';
+            }
+          }
+        }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

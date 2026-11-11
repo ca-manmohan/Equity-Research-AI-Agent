@@ -139,6 +139,8 @@ Or attach an Annual Report / Independent Auditor's Report PDF for page-cited for
 python cli.py dashboard BEL.NS --pdf path/to/AnnualReport.pdf --open
 ```
 
+> **Sample Dashboard Output:** View [`exampledashboard.html`](exampledashboard.html) (generated from actual live market & filing data for **TCS.NS**) for an example of the full 8-section interactive HTML output.
+
 ### 3. Run the Autonomous Multi-Step Research Agent
 ```bash
 python cli.py run "Find Indian defense or IT compounders, inspect BEL.NS for govt contract risk, and save memo" --offline --open
