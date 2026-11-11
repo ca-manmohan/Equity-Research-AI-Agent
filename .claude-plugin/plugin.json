@@ -1,0 +1,15 @@
+{
+  "name": "equity-research-ai-agent",
+  "displayName": "Equity Research AI Agent (Free Data + KDB-X)",
+  "version": "1.0.0",
+  "description": "Cross-agent institutional equity research suite (Claude Code, ChatGPT/Codex, Cursor, Antigravity, MCP) enforcing strict actual data, PyKX/KDB-X screening, NSE XBRL segments, 5Y DCF & IRR/MOIC returns, PDF forensics, and SEBI educational compliance.",
+  "skills": "../skills",
+  "agents": "../agents",
+  "mcpServers": "../.mcp.json",
+  "suggestedPrompts": [
+    "Discover my financial goals and scan NSE small/mid-cap multibaggers in Defense or IT",
+    "Compare BEL.NS, DATAPATTNS.NS, and ZENTEC.NS on ROIC, Reverse DCF, and cash conversion",
+    "Generate a full 8-section educational dashboard and research memo for RELIANCE.NS",
+    "Audit an Annual Report PDF for adverse CARO remarks, bank loans, govt contracts, and litigation"
+  ]
+}

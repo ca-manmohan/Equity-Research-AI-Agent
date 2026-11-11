@@ -336,6 +336,25 @@ class AgentWorkspace:
         """Analyze latest quarterly Indian earnings (YoY Revenue, EBIT Margin, PAT trend)."""
         return analyze_quarterly_earnings_india(symbol)
 
+    def list_skills(self, skill_id: Optional[str] = None) -> Dict[str, Any]:
+        """List all portable AI agent skills from skills/registry.json, or read one skill's SKILL.md."""
+        reg_path = self.base_dir / "skills" / "registry.json"
+        if not reg_path.exists():
+            return {"status": "unavailable", "skills": []}
+        registry = json.loads(reg_path.read_text(encoding="utf-8"))
+        if skill_id:
+            target = skill_id.strip().lower()
+            entry = next(
+                (s for s in registry.get("skills", []) if s["id"].lower() == target),
+                None,
+            )
+            if entry is None:
+                return {"status": "error", "message": f"Skill not found: {skill_id}"}
+            md_path = self.base_dir / entry["skill_md"]
+            instructions = md_path.read_text(encoding="utf-8") if md_path.exists() else ""
+            return {"status": "ok", "skill": entry, "instructions": instructions}
+        return {"status": "ok", **registry}
+
     def dispatch(self, tool_name: str, arguments_json: str) -> str:
         """Execute a named tool from JSON arguments for LLM function-calling loops."""
         args = json.loads(arguments_json) if arguments_json else {}
@@ -351,6 +370,7 @@ class AgentWorkspace:
             "comps_india": self.comps_india,
             "screener_india": self.screener_india,
             "earnings_india": self.earnings_india,
+            "list_skills": self.list_skills,
         }
         fn = mapping.get(tool_name)
         if fn is None:
@@ -529,6 +549,22 @@ OPENAI_TOOL_SCHEMAS: List[Dict[str, Any]] = [
                 "type": "object",
                 "properties": {"symbol": {"type": "string"}},
                 "required": ["symbol"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "list_skills",
+            "description": "Discover the portable Skills Registry (skills/registry.json) or retrieve full SKILL.md workflow instructions for a specific skill_id.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "skill_id": {
+                        "type": "string",
+                        "description": "Optional skill ID (e.g. 'dcf-india', 'earnings-india', 'audit-qc-india') to retrieve its full SKILL.md prompt.",
+                    }
+                },
             },
         },
     },

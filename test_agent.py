@@ -319,3 +319,37 @@ def test_strict_actual_data_blocks_phantom_tickers(tmp_path) -> None:
     ws = AgentWorkspace(base_dir=tmp_path)
     out = ws.generate_stock_report_and_dashboard(symbol="INVALID_NONEXISTENT_XYZ_999.NS")
     assert out.get("status") == "error"
+
+
+def test_cross_agent_skills_registry_and_mcp(tmp_path) -> None:
+    import json
+
+    repo_root = Path(__file__).resolve().parent
+    assert (repo_root / "AGENTS.md").exists()
+    assert (repo_root / "CLAUDE.md").exists()
+    assert (repo_root / ".mcp.json").exists()
+    assert (repo_root / ".claude-plugin" / "plugin.json").exists()
+    assert (repo_root / "docs" / "FundamentalAnalysis.md").exists()
+    assert (repo_root / "docs" / "AdvancedFundamentalAnalysis.md").exists()
+
+    reg_path = repo_root / "skills" / "registry.json"
+    assert reg_path.exists()
+    reg = json.loads(reg_path.read_text(encoding="utf-8"))
+    assert len(reg.get("skills", [])) == 9
+    for entry in reg["skills"]:
+        assert (repo_root / entry["skill_md"]).exists()
+
+    ws = AgentWorkspace(base_dir=repo_root)
+    resp = handle_request(
+        ws,
+        {
+            "jsonrpc": "2.0",
+            "id": 99,
+            "method": "tools/call",
+            "params": {"name": "list_skills", "arguments": {"skill_id": "dcf-india"}},
+        },
+    )
+    payload = json.loads(resp["result"]["content"][0]["text"])
+    assert payload["status"] == "ok"
+    assert payload["skill"]["id"] == "dcf-india"
+    assert "FCFF" in payload["instructions"]

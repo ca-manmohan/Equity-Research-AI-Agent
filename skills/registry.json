@@ -1,0 +1,99 @@
+{
+  "name": "equity-research-ai-agent-skills",
+  "version": "1.0.0",
+  "description": "Portable multi-agent skill registry for ChatGPT/OpenAI Codex, Claude Code, Anthropic Plugins, Cursor, Antigravity, Windsurf, and MCP clients.",
+  "mcp_server": {
+    "name": "indian-investor-mcp",
+    "command": "python",
+    "args": ["mcp_server.py"],
+    "config_file": ".mcp.json"
+  },
+  "skills": [
+    {
+      "id": "fundamental-research-analyst",
+      "name": "Master Fundamental Research Analyst",
+      "slash_command": "/fundamental-research-analyst",
+      "tier": "Orchestrator",
+      "skill_md": "skills/fundamental-research-analyst/SKILL.md",
+      "mcp_tools": ["set_investor_mandate", "scan_and_rank_kdb", "inspect_stock_deeply", "audit_filing_and_external_risks", "generate_stock_report_and_dashboard", "save_research_memo"],
+      "description": "End-to-end 4-stage institutional equity research agent generating 8-section HTML dashboards and Markdown memos with strict actual-data guards."
+    },
+    {
+      "id": "goal-intake",
+      "name": "Stage 0 Investor Mandate Intake",
+      "slash_command": "/goal-intake",
+      "tier": "Industry Standard",
+      "skill_md": "skills/goal-intake/SKILL.md",
+      "mcp_tools": ["set_investor_mandate"],
+      "description": "Captures target return multiple, horizon, drawdown tolerance, market, cap focus, and strategy archetype."
+    },
+    {
+      "id": "idea-generation",
+      "name": "Cross-Sectional Screening & Idea Discovery",
+      "slash_command": "/idea-generation",
+      "tier": "Industry Standard",
+      "skill_md": "skills/idea-generation/SKILL.md",
+      "mcp_tools": ["search_equities", "scan_and_rank_kdb", "get_kdb_telemetry"],
+      "description": "KDB-X / PyKX quality, GARP, value, and multibagger screening across IN/CA/US/GLOBAL universes."
+    },
+    {
+      "id": "three-statement-india",
+      "name": "Ind-AS 3-Statement & Screener Excel Analysis",
+      "slash_command": "/three-statement-india",
+      "tier": "Industry Standard",
+      "skill_md": "skills/three-statement-india/SKILL.md",
+      "mcp_tools": ["inspect_stock_deeply", "screener_india"],
+      "description": "Ind-AS P&L, Balance Sheet, Cash Flow integrity, Screener.in consolidated ratios, and Excel exports."
+    },
+    {
+      "id": "comps-india",
+      "name": "Peer Comparison & Competitive Moat Matrix",
+      "slash_command": "/comps-india",
+      "tier": "Industry Standard",
+      "skill_md": "skills/comps-india/SKILL.md",
+      "mcp_tools": ["comps_india", "generate_stock_report_and_dashboard"],
+      "description": "Peer multiples, ROIC, cash conversion, 2x2 positioning, and 4-pillar moat assessment."
+    },
+    {
+      "id": "dcf-india",
+      "name": "Unlevered FCFF DCF & 5Y IRR/MOIC Valuation",
+      "slash_command": "/dcf-india",
+      "tier": "Industry Standard",
+      "skill_md": "skills/dcf-india/SKILL.md",
+      "mcp_tools": ["inspect_stock_deeply", "generate_stock_report_and_dashboard"],
+      "description": "5-year FCFF DCF sensitivity grid, Reverse-DCF implied growth, SOTP check, and 5Y IRR/MOIC attribution."
+    },
+    {
+      "id": "earnings-india",
+      "name": "Quarterly Earnings Surprise & Ind-AS 108 Segments",
+      "slash_command": "/earnings-india",
+      "tier": "Industry Standard",
+      "skill_md": "skills/earnings-india/SKILL.md",
+      "mcp_tools": ["earnings_india", "generate_stock_report_and_dashboard"],
+      "description": "4Q EPS surprise beat/miss %, 30D revisions, YoY/QoQ margin bps deltas, and NSE XBRL segment breakdown."
+    },
+    {
+      "id": "audit-qc-india",
+      "name": "Statement Quality & Filing Forensic QC",
+      "slash_command": "/audit-qc-india",
+      "tier": "Industry Standard",
+      "skill_md": "skills/audit-qc-india/SKILL.md",
+      "mcp_tools": ["audit_filing_and_external_risks"],
+      "description": "Auditor opinion checks, CFO/PAT cash conversion, promoter pledges, contingent claims, and bank loan risk."
+    },
+    {
+      "id": "advanced-research-2026",
+      "name": "Advanced 2026 Quantitative & CARO Forensics",
+      "slash_command": "/advanced-research-2026",
+      "tier": "Advanced 2026 Quant",
+      "skill_md": "skills/advanced-research-2026/SKILL.md",
+      "mcp_tools": ["scan_and_rank_kdb", "audit_filing_and_external_risks", "generate_stock_report_and_dashboard"],
+      "description": "Weighted 6-layer scoring, Ball et al. cash profitability, Eisfeldt HML_INT, and macro/war/govt contract stress."
+    }
+  ],
+  "agents": [
+    "agents/multibagger-hunter.md",
+    "agents/forensic-auditor.md",
+    "agents/earnings-reviewer.md"
+  ]
+}

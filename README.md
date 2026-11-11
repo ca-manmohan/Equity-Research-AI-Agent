@@ -40,9 +40,27 @@ An autonomous, institutional-grade **Equity Research AI Agent** engineered for m
 
 ```text
 fundamental_analyst_app/
+├── AGENTS.md                 # Universal instructions for Codex / ChatGPT, Cursor, Antigravity, Gemini CLI
+├── CLAUDE.md                 # Native Claude Code / Anthropic instructions entrypoint
+├── .mcp.json                 # Relative stdio MCP server configuration (`python mcp_server.py`)
+├── .claude-plugin/
+│   └── plugin.json           # Portable Claude Code / Anthropic plugin manifest
+├── skills/
+│   ├── registry.json         # Machine-readable catalog of all 9 modular research skills
+│   ├── fundamental-research-analyst/SKILL.md
+│   ├── goal-intake/SKILL.md
+│   ├── idea-generation/SKILL.md
+│   ├── three-statement-india/SKILL.md
+│   ├── comps-india/SKILL.md
+│   ├── dcf-india/SKILL.md
+│   ├── earnings-india/SKILL.md
+│   ├── audit-qc-india/SKILL.md
+│   └── advanced-research-2026/SKILL.md
+├── agents/                   # Specialized subagent prompts (`multibagger-hunter`, `forensic-auditor`, `earnings-reviewer`)
+├── docs/                     # Industry-Standard & Advanced 2026 Quantitative specifications
 ├── __init__.py               # Public package exports and version metadata
 ├── agent.py                  # Autonomous LLM tool-calling + deterministic offline research agent
-├── agent_tools.py            # Shared AgentWorkspace & 11 OpenAI/MCP tool definitions
+├── agent_tools.py            # Shared AgentWorkspace & 12 OpenAI/MCP tool definitions (incl. `list_skills`)
 ├── cli.py                    # Typer + Rich terminal CLI (`run`, `dashboard`, `chat`)
 ├── data_ingestor.py          # Yahoo Finance ingestion + KDB-X (.kdb) cache + strict actual-data validator
 ├── indian_connectors.py      # Screener.in consolidated scraper, Excel parser, NSE filings & XBRL segment XML parser
@@ -58,6 +76,18 @@ fundamental_analyst_app/
 ├── LICENSE                   # MIT License
 └── README.md                 # Project documentation
 ```
+
+---
+
+## Multi-Agent Compatibility (ChatGPT / Codex, Claude Code, Cursor, Antigravity)
+
+Clone this repository once and it works identically across any AI coding agent or MCP client with zero machine-specific paths:
+
+| Agent / IDE | Auto-Discovered Files | How It Uses Skills & Tools |
+| :--- | :--- | :--- |
+| **Claude Code / Anthropic Plugins** | `CLAUDE.md`, `.mcp.json`, `.claude-plugin/plugin.json`, `skills/*/SKILL.md` | Automatically loads `indian-investor-mcp` via `.mcp.json` and slash skills (`/dcf-india`, `/earnings-india`, etc.). |
+| **OpenAI Codex / ChatGPT Agents** | `AGENTS.md`, `skills/registry.json`, `agent_tools.py` | Follows `AGENTS.md` guardrails and discovers/invokes all 12 tools + `list_skills` via OpenAI function schemas or MCP. |
+| **Antigravity / Cursor / Windsurf / Gemini CLI** | `AGENTS.md`, `.mcp.json`, `skills/*/SKILL.md`, `agents/*.md` | Reads universal instructions & spawns stdio MCP tools or CLI commands cleanly. |
 
 ---
 
